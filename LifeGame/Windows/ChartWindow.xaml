@@ -1,0 +1,12 @@
+﻿<Window x:Class="LifeGame.Windows.ChartWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LifeGame"
+        xmlns:chart="clr-namespace:LifeGame.Charting"
+        mc:Ignorable="d"
+        Title="График" Width="900" Height="500" ResizeMode="NoResize"
+        Icon="/Resources/heart_icon.png" WindowStartupLocation="CenterScreen">
+    <chart:ChartingElement Width="840" Height="440" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" x:Name="ChartingElement" />
+</Window>

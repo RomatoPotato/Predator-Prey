@@ -1,0 +1,113 @@
+﻿<Window x:Class="LifeGame.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LifeGame"
+        xmlns:chart="clr-namespace:LifeGame.Charting"
+        mc:Ignorable="d" ResizeMode="NoResize"
+        Title="Life Game" Width="950" 
+        WindowStartupLocation="CenterScreen" SizeToContent="Height" Icon="/Resources/heart_icon.png">
+    <Window.CommandBindings>
+        <CommandBinding Command="local:Commands.OpenChart" Executed="CommandBinding_Executed" />
+    </Window.CommandBindings>
+    <DockPanel LastChildFill="True">
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Файл"/>
+            <MenuItem Header="_График">
+                <MenuItem Header="Открыть в отдельном окне" Command="local:Commands.OpenChart" />
+            </MenuItem>
+        </Menu>
+        <ToolBar Height="30" DockPanel.Dock="Top">
+            <Button Name="FillFiledButton" Content="Заполнить поле" Click="FillFieldButton_Click" />
+            <Button Name="MoveButton" Content="Движение" Click="MoveButton_Click"/>
+            <Button Name="PlayButton" Content="Пуск" Click="PlayButton_Click" />
+            <Button Name="StopButton" Content="Стоп" Click="StopButton_Click" />
+        </ToolBar>
+        <StatusBar Height="30" DockPanel.Dock="Bottom">
+            <StatusBarItem HorizontalAlignment="Left" Margin="5,0,5,0">
+                <TextBlock Name="IterationCountTextBlock" FontSize="16" Text="Итераций: 0" />
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right" Margin="5,0,5,0">
+                <TextBlock Name="EntityCountTextBlock" FontSize="16" Text="Хищников: 0, Жертв: 0" />
+            </StatusBarItem>
+        </StatusBar>
+        <Grid Background="CornflowerBlue" DockPanel.Dock="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="610" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Width="600" Height="600" Margin="5">
+                <Image Name="SimulationField" />
+            </Grid>
+            <DockPanel Grid.Column="1" LastChildFill="True" Background="#FFB4CFFF">
+                <DockPanel Margin="5" LastChildFill="True">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Ширина поля" />
+                        <Slider Grid.Row="0" Grid.Column="1" Minimum="6" Value="64" Maximum="150" Name="fieldSizeSlider" IsSnapToTickEnabled="True" TickFrequency="1" />
+                        <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding ElementName=fieldSizeSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Количество хищников" />
+                        <TextBox Grid.Row="1" Grid.Column="2" Text="50" Name="predatorCountTextBox" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Количество жертв" />
+                        <TextBox Grid.Row="2" Grid.Column="3" Text="4000" Name="preyCountTextBox" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
+                    </Grid>
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="60" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Хищники" HorizontalAlignment="Center" />
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Жертвы" HorizontalAlignment="Center" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Смерть от перенаселения" />
+                        <CheckBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Name="DeathByOverpopulatingCheckBox_Predator" />
+                        <CheckBox Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" Name="DeathByOverpopulatingCheckBox_Prey" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Критическое количество соседей" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="8" Name="CriticalAmountOfNeighborsTextBox_Predator" IsEnabled="{Binding ElementName=DeathByOverpopulatingCheckBox_Predator, Path=IsChecked}" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
+                        <TextBox Grid.Row="2" Grid.Column="2" Text="8" Name="CriticalAmountOfNeighborsTextBox_Prey" IsEnabled="{Binding ElementName=DeathByOverpopulatingCheckBox_Prey, Path=IsChecked}" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Потомство от двух родителей" />
+                        <CheckBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" Name="BreedWith2ParentsCheckBox_Predator" />
+                        <CheckBox Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" Name="BreedWith2ParentsCheckBox_Prey" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Кол-во итераций для перемещения" />
+                        <TextBox Grid.Row="4" Grid.Column="1" Text="1" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="MovingIterationsTextBox_Predator" />
+                        <TextBox Grid.Row="4" Grid.Column="2" Text="5" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="MovingIterationsTextBox_Prey" />
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Кол-во итераций для размножения" />
+                        <TextBox Grid.Row="5" Grid.Column="1" Text="10" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="BreedingIterationsTextBox_Predator" />
+                        <TextBox Grid.Row="5" Grid.Column="2" Text="5" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="BreedingIterationsTextBox_Prey" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Время жизни" />
+                        <TextBox Grid.Row="6" Grid.Column="1" Text="40" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="LifeTimeTextBox_Predator" />
+                        <TextBox Grid.Row="6" Grid.Column="2" Text="20" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="LifeTimeTextBox_Prey" />
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Количество энергии" />
+                        <TextBox Grid.Row="7" Grid.Column="1" Text="8" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="AmountOfEnergyTextBox_Predator" />
+                    </Grid>
+                    <WrapPanel DockPanel.Dock="Top" Height="200" VerticalAlignment="Bottom" Background="White">
+                        <chart:ChartingElement Height="190" Width="310" x:Name="ChartingElement" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </WrapPanel>
+                </DockPanel>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>
