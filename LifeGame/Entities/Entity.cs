@@ -9,9 +9,9 @@ namespace LifeGame.Entities
     {
         public abstract SolidColorBrush Color { get; set; }
 
-        public (int, int) LifeTime { get; set; }
-        public (int, int) BreedingIterations { get; set; }
-        public (int, int) AmountOfEnergy { get; set; }
+        public int LifeTime { get; set; }
+        public int BreedingIterations { get; set; }
+        public int AmountOfEnergy { get; set; }
         public int MovingIterations { get; set; }
         public int CriticalAmountOfNeighbors { get; set; }
         public bool BreedWith2Parents { get; set; }
@@ -21,6 +21,8 @@ namespace LifeGame.Entities
         public bool IsMoved { get; set; } = false;
         public bool IsEaten { get; set; } = false;
 
+        private Random settingsRandom = new Random();
+
         public bool IsActed()
         {
             return IsBorn || IsEaten || IsGaveBirth || IsMoved;
@@ -28,16 +30,16 @@ namespace LifeGame.Entities
 
         protected HashSet<(int x, int y)> neighborsIndexes = new HashSet<(int, int)>();
 
-        public Entity EntitySettings { get; set; }
+        public EntitySettings EntitySettings { get; set; }
 
-        public Entity(Entity settings)
+        public Entity(EntitySettings settings)
         {
             CriticalAmountOfNeighbors = settings.CriticalAmountOfNeighbors;
             BreedWith2Parents = settings.BreedWith2Parents;
             MovingIterations = settings.MovingIterations;
-            BreedingIterations = settings.BreedingIterations;
-            LifeTime = settings.LifeTime;
-            AmountOfEnergy = settings.AmountOfEnergy;
+            BreedingIterations = settingsRandom.Next(settings.BreedingIterations.Min, settings.BreedingIterations.Max);
+            LifeTime = settingsRandom.Next(settings.LifeTime.Min, settings.LifeTime.Max);
+            AmountOfEnergy = settingsRandom.Next(settings.AmountOfEnergy.Min, settings.AmountOfEnergy.Max);
         }
 
         public Entity()

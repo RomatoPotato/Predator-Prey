@@ -1,9 +1,9 @@
 ﻿using LifeGame.Charting;
 using LifeGame.Entities;
 using System;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -38,23 +38,23 @@ namespace LifeGame.Windows
             s.PreyCount = preyCountTextBox.Text == string.Empty ? 0 : int.Parse(preyCountTextBox.Text);
             s.PredatorCount = predatorCountTextBox.Text == string.Empty ? 0 : int.Parse(predatorCountTextBox.Text);
 
-            Predator predatorSettings = new Predator
+            EntitySettings predatorSettings = new EntitySettings
             {
                 BreedWith2Parents = BreedWith2ParentsCheckBox_Predator.IsChecked.GetValueOrDefault(),
-                CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Predator.IsChecked ?? false ? int.Parse(CriticalAmountOfNeighborsTextBox_Predator.Text) : 9,
-                MovingIterations = int.Parse(MovingIterationsTextBox_Predator.Text),
-                BreedingIterations = int.Parse(BreedingIterationsTextBox_Predator.Text),
-                LifeTime = int.Parse(LifeTimeTextBox_Predator.Text),
-                AmountOfEnergy = int.Parse(AmountOfEnergyTextBox_Predator.Text),
+                CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Predator.IsChecked ?? false ? CriticalAmountOfNeighborsPredator_NumericBox.Value : 9,
+                MovingIterations = MovingIterationsPredator_NumericBox.Value,
+                BreedingIterations = (BreedingIterationsPredatorMin_NumericBox.Value, BreedingIterationsPredatorMax_NumericBox.Value),
+                LifeTime = (LifeTimePredatorMin_NumericBox.Value, LifeTimePredatorMax_NumericBox.Value),
+                AmountOfEnergy = (AmountOfEnergyPredatorMin_NumericBox.Value, AmountOfEnergyPredatorMax_NumericBox.Value)
             };
 
-            Prey preySettings = new Prey
+            EntitySettings preySettings = new EntitySettings
             {
                 BreedWith2Parents = BreedWith2ParentsCheckBox_Prey.IsChecked.GetValueOrDefault(),
-                CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Prey.IsChecked ?? false ? int.Parse(CriticalAmountOfNeighborsTextBox_Prey.Text) : 9,
-                MovingIterations = int.Parse(MovingIterationsTextBox_Prey.Text),
-                BreedingIterations = int.Parse(BreedingIterationsTextBox_Prey.Text),
-                LifeTime = int.Parse(LifeTimeTextBox_Prey.Text),
+                CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Prey.IsChecked ?? false ? CriticalAmountOfNeighborsPrey_NumericBox.Value : 9,
+                MovingIterations = MovingIterationsPrey_NumericBox.Value,
+                BreedingIterations = (BreedingIterationsPreyMin_NumericBox.Value, BreedingIterationsPreyMax_NumericBox.Value),
+                LifeTime = (LifeTimePreyMin_NumericBox.Value, LifeTimePreyMax_NumericBox.Value)
             };
 
             s.PredatorSettings = predatorSettings;
@@ -103,7 +103,7 @@ namespace LifeGame.Windows
             NextStep();
         }
 
-        private void NumbersTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        private void NumbersTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
@@ -123,6 +123,11 @@ namespace LifeGame.Windows
         {
             ChartWindow chartWindow = new ChartWindow();
             chartWindow.Show();
+        }
+
+        private void preyCountTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
         }
     }
 }

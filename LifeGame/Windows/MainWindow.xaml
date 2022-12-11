@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LifeGame"
         xmlns:chart="clr-namespace:LifeGame.Charting"
+        xmlns:add="clr-namespace:LifeGame.Additional"
         mc:Ignorable="d" ResizeMode="NoResize"
-        Title="Life Game" Width="950" 
+        Title="Life Game" Width="1070" 
         WindowStartupLocation="CenterScreen" SizeToContent="Height" Icon="/Resources/heart_icon.png">
     <Window.CommandBindings>
         <CommandBinding Command="local:Commands.OpenChart" Executed="CommandBinding_Executed" />
@@ -47,7 +48,7 @@
                 <DockPanel Margin="5" LastChildFill="True">
                     <Grid DockPanel.Dock="Top">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130" />
+                            <ColumnDefinition Width="200" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="40" />
                         </Grid.ColumnDefinitions>
@@ -67,8 +68,12 @@
                     <Grid DockPanel.Dock="Top">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="55" />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="55" />
+                            <ColumnDefinition Width="55" />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="55" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
@@ -80,31 +85,41 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Хищники" HorizontalAlignment="Center" />
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Жертвы" HorizontalAlignment="Center" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="Хищники" HorizontalAlignment="Center" />
+                        <TextBlock Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="3" Text="Жертвы" HorizontalAlignment="Center" />
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Смерть от перенаселения" />
                         <CheckBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Name="DeathByOverpopulatingCheckBox_Predator" />
-                        <CheckBox Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" Name="DeathByOverpopulatingCheckBox_Prey" />
+                        <CheckBox Grid.Row="1" Grid.Column="4" HorizontalAlignment="Center" Name="DeathByOverpopulatingCheckBox_Prey" />
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Критическое количество соседей" />
-                        <TextBox Grid.Row="2" Grid.Column="1" Text="8" Name="CriticalAmountOfNeighborsTextBox_Predator" IsEnabled="{Binding ElementName=DeathByOverpopulatingCheckBox_Predator, Path=IsChecked}" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
-                        <TextBox Grid.Row="2" Grid.Column="2" Text="8" Name="CriticalAmountOfNeighborsTextBox_Prey" IsEnabled="{Binding ElementName=DeathByOverpopulatingCheckBox_Prey, Path=IsChecked}" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
+                        <add:NumericBox x:Name="CriticalAmountOfNeighborsPredator_NumericBox" IsEnabled="{Binding ElementName=DeathByOverpopulatingCheckBox_Predator, Path=IsChecked}" Grid.Row="2" Grid.Column="1" Value="8" MinValue="0" MaxValue="8" />
+                        <add:NumericBox x:Name="CriticalAmountOfNeighborsPrey_NumericBox" IsEnabled="{Binding ElementName=DeathByOverpopulatingCheckBox_Prey, Path=IsChecked}" Grid.Row="2" Grid.Column="4" Value="8" MinValue="0" MaxValue="8" />
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="Потомство от двух родителей" />
                         <CheckBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" Name="BreedWith2ParentsCheckBox_Predator" />
-                        <CheckBox Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" Name="BreedWith2ParentsCheckBox_Prey" />
+                        <CheckBox Grid.Row="3" Grid.Column="4" HorizontalAlignment="Center" Name="BreedWith2ParentsCheckBox_Prey" />
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="Кол-во итераций для перемещения" />
-                        <TextBox Grid.Row="4" Grid.Column="1" Text="1" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="MovingIterationsTextBox_Predator" />
-                        <TextBox Grid.Row="4" Grid.Column="2" Text="5" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="MovingIterationsTextBox_Prey" />
+                        <add:NumericBox x:Name="MovingIterationsPredator_NumericBox" Grid.Row="4" Grid.Column="1" Value="1" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="MovingIterationsPrey_NumericBox" Grid.Row="4" Grid.Column="4" Value="5" MinValue="0" MaxValue="100" />
                         <TextBlock Grid.Row="5" Grid.Column="0" Text="Кол-во итераций для размножения" />
-                        <TextBox Grid.Row="5" Grid.Column="1" Text="10" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="BreedingIterationsTextBox_Predator" />
-                        <TextBox Grid.Row="5" Grid.Column="2" Text="5" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="BreedingIterationsTextBox_Prey" />
+                        <add:NumericBox x:Name="BreedingIterationsPredatorMin_NumericBox" Grid.Row="5" Grid.Column="1" Value="10" MinValue="0" MaxValue="100" />
+                        <TextBlock Grid.Row="5" Grid.Column="2" Text="-" HorizontalAlignment="Center" />
+                        <add:NumericBox x:Name="BreedingIterationsPredatorMax_NumericBox" Grid.Row="5" Grid.Column="3" Value="12" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="BreedingIterationsPreyMin_NumericBox" Grid.Row="5" Grid.Column="4" Value="5" MinValue="0" MaxValue="100" />
+                        <TextBlock Grid.Row="5" Grid.Column="5" Text="-" HorizontalAlignment="Center" />
+                        <add:NumericBox x:Name="BreedingIterationsPreyMax_NumericBox" Grid.Row="5" Grid.Column="6" Value="8" MinValue="0" MaxValue="100" />
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="Время жизни" />
-                        <TextBox Grid.Row="6" Grid.Column="1" Text="40" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="LifeTimeTextBox_Predator" />
-                        <TextBox Grid.Row="6" Grid.Column="2" Text="20" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="LifeTimeTextBox_Prey" />
+                        <add:NumericBox x:Name="LifeTimePredatorMin_NumericBox" Grid.Row="6" Grid.Column="1" Value="30" MinValue="0" MaxValue="100" />
+                        <TextBlock Grid.Row="6" Grid.Column="2" Text="-" HorizontalAlignment="Center" />
+                        <add:NumericBox x:Name="LifeTimePredatorMax_NumericBox" Grid.Row="6" Grid.Column="3" Value="40" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="LifeTimePreyMin_NumericBox" Grid.Row="6" Grid.Column="4" Value="15" MinValue="0" MaxValue="100" />
+                        <TextBlock Grid.Row="6" Grid.Column="5" Text="-" HorizontalAlignment="Center" />
+                        <add:NumericBox x:Name="LifeTimePreyMax_NumericBox" Grid.Row="6" Grid.Column="6" Value="20" MinValue="0" MaxValue="100" />
                         <TextBlock Grid.Row="7" Grid.Column="0" Text="Количество энергии" />
-                        <TextBox Grid.Row="7" Grid.Column="1" Text="8" PreviewTextInput="NumbersTextBox_PreviewTextInput" Name="AmountOfEnergyTextBox_Predator" />
+                        <add:NumericBox x:Name="AmountOfEnergyPredatorMin_NumericBox" Grid.Row="7" Grid.Column="1" Value="8" MinValue="0" MaxValue="100" />
+                        <TextBlock Grid.Row="7" Grid.Column="2" Text="-" HorizontalAlignment="Center" />
+                        <add:NumericBox x:Name="AmountOfEnergyPredatorMax_NumericBox" Grid.Row="7" Grid.Column="3" Value="10" MinValue="0" MaxValue="100" />
                     </Grid>
                     <WrapPanel DockPanel.Dock="Top" Height="200" VerticalAlignment="Bottom" Background="White">
-                        <chart:ChartingElement Height="190" Width="310" x:Name="ChartingElement" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        <chart:ChartingElement Height="190" Width="430" x:Name="ChartingElement" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </WrapPanel>
                 </DockPanel>
             </DockPanel>

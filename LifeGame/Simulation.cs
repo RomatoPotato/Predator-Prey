@@ -19,8 +19,8 @@ namespace LifeGame
         public int CellSize { get; set; } = 10;
         public int PreyCount { get; set; } = 500;
         public int PredatorCount { get; set; } = 500;
-        public Predator PredatorSettings { get; set; }
-        public Prey PreySettings { get; set; }
+        public EntitySettings PredatorSettings { get; set; }
+        public EntitySettings PreySettings { get; set; }
 
         public Simulation(Image simulationField)
         {
