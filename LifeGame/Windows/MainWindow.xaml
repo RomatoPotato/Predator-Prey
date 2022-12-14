@@ -44,7 +44,7 @@
             <Grid Width="600" Height="600" Margin="5">
                 <Image Name="SimulationField" />
             </Grid>
-            <DockPanel Grid.Column="1" LastChildFill="True" Background="#FFB4CFFF">
+            <DockPanel Grid.Column="1" LastChildFill="True" Background="#FFB4CFFF" Name="EntityConfig" >
                 <DockPanel Margin="5" LastChildFill="True">
                     <Grid DockPanel.Dock="Top">
                         <Grid.ColumnDefinitions>

@@ -1,4 +1,5 @@
-﻿using LifeGame.Charting;
+﻿using LifeGame.AppData;
+using LifeGame.Charting;
 using LifeGame.Entities;
 using System;
 using System.Text.RegularExpressions;
@@ -14,10 +15,36 @@ namespace LifeGame.Windows
         Simulation s;
         Chart chart;
         DispatcherTimer timer;
+        Data defaultDataConfig;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            defaultDataConfig = new Data()
+            {
+                AreaWidth = 64,
+                PredatorsCount = 50,
+                PreyCount = 4000,
+                DeathByOverpopulatingPredator = false,
+                DeathByOverpopulatingPrey = false,
+                BreedingWith2ParentsPredator = false,
+                BreedingWith2ParentsPrey = false,
+                MovingIterationsPredator = 1,
+                MovingIterationsPrey = 5,
+                BreedingIterationsPredatorMin = 10,
+                BreedingIterationsPredatorMax = 12,
+                BreedingIterationsPreyMin = 5,
+                BreedingIterationsPreyMax = 8,
+                LifeTimePredatorMin = 30,
+                LifeTimePredatorMax = 40,
+                LifeTimePreyMin = 15,
+                LifeTimePreyMax = 20,
+                AmountOfEnergyPredatorMin = 8,
+                AmountOfEnergyPredatorMax = 10
+            };
+
+            EntityConfig.DataContext = defaultDataConfig;
 
             s = new Simulation(SimulationField);
             SetSimulationData();
