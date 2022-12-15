@@ -65,7 +65,7 @@ namespace LifeGame.Windows
             s.PreyCount = preyCountTextBox.Text == string.Empty ? 0 : int.Parse(preyCountTextBox.Text);
             s.PredatorCount = predatorCountTextBox.Text == string.Empty ? 0 : int.Parse(predatorCountTextBox.Text);
 
-            EntitySettings predatorSettings = new EntitySettings
+            EntityTemplate predatorSettings = new EntityTemplate
             {
                 BreedWith2Parents = BreedWith2ParentsCheckBox_Predator.IsChecked.GetValueOrDefault(),
                 CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Predator.IsChecked ?? false ? CriticalAmountOfNeighborsPredator_NumericBox.Value : 9,
@@ -75,7 +75,7 @@ namespace LifeGame.Windows
                 AmountOfEnergy = (AmountOfEnergyPredatorMin_NumericBox.Value, AmountOfEnergyPredatorMax_NumericBox.Value)
             };
 
-            EntitySettings preySettings = new EntitySettings
+            EntityTemplate preySettings = new EntityTemplate
             {
                 BreedWith2Parents = BreedWith2ParentsCheckBox_Prey.IsChecked.GetValueOrDefault(),
                 CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Prey.IsChecked ?? false ? CriticalAmountOfNeighborsPrey_NumericBox.Value : 9,

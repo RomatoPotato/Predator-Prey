@@ -30,9 +30,9 @@ namespace LifeGame.Entities
 
         protected HashSet<(int x, int y)> neighborsIndexes = new HashSet<(int, int)>();
 
-        public EntitySettings EntitySettings { get; set; }
+        public EntityTemplate EntitySettings { get; set; }
 
-        public Entity(EntitySettings settings)
+        public Entity(EntityTemplate settings)
         {
             CriticalAmountOfNeighbors = settings.CriticalAmountOfNeighbors;
             BreedWith2Parents = settings.BreedWith2Parents;

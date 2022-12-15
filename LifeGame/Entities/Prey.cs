@@ -7,7 +7,7 @@ namespace LifeGame.Entities
 {
     internal class Prey : Entity
     {
-        public Prey(EntitySettings settings) : base(settings)
+        public Prey(EntityTemplate settings) : base(settings)
         {
             EntitySettings = settings;
         }

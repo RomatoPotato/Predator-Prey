@@ -2,7 +2,7 @@
 
 namespace LifeGame.Entities
 {
-    internal class EntitySettings
+    internal class EntityTemplate
     {
         public SolidColorBrush Color { get; set; } = Brushes.Black;
 
