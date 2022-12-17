@@ -83,7 +83,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <TextBlock Grid.Column="0" Margin="5,0,5,0" x:Name="NumericTextBox" Text="{Binding Value, ElementName=NumericControl}" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Margin="5,0,5,0" x:Name="NumericTextBox" Text="{Binding Path=Value, ElementName=NumericControl}" VerticalAlignment="Center"/>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />

@@ -121,7 +121,7 @@ namespace LifeGame.Entities
             --LifeTime;
             --AmountOfEnergy;
 
-            if (LifeTime <= 0 || neighborsIndexes.Count - clearCells.Count >= CriticalAmountOfNeighbors)
+            if (LifeTime <= 0 || neighborsIndexes.Count - clearCells.Count >= CriticalAmountOfNeighbors + 1)
             {
                 if (entities[x][y] is Predator && AmountOfEnergy <= 0)
                 {

@@ -15,19 +15,21 @@ namespace LifeGame.Windows
         Simulation s;
         Chart chart;
         DispatcherTimer timer;
-        Data defaultDataConfig;
+        EntitiesPreset entitiesPreset;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            defaultDataConfig = new Data()
+            entitiesPreset = new EntitiesPreset()
             {
                 AreaWidth = 64,
                 PredatorsCount = 50,
-                PreyCount = 4000,
-                DeathByOverpopulatingPredator = false,
-                DeathByOverpopulatingPrey = false,
+                PreysCount = 4000,
+                CriticalAmountOfNeighborsPredator = 8,
+                CriticalAmountOfNeighborsPrey = 8,
+                DeathByOverpopulationPredator = false,
+                DeathByOverpopulationPrey = false,
                 BreedingWith2ParentsPredator = false,
                 BreedingWith2ParentsPrey = false,
                 MovingIterationsPredator = 1,
@@ -41,10 +43,11 @@ namespace LifeGame.Windows
                 LifeTimePreyMin = 15,
                 LifeTimePreyMax = 20,
                 AmountOfEnergyPredatorMin = 8,
-                AmountOfEnergyPredatorMax = 10
+                AmountOfEnergyPredatorMax = 10,
+                HasNoErrors = true
             };
 
-            EntityConfig.DataContext = defaultDataConfig;
+            EntityConfig.DataContext = entitiesPreset;
 
             s = new Simulation(SimulationField);
             SetSimulationData();
@@ -59,29 +62,58 @@ namespace LifeGame.Windows
             timer.Interval = TimeSpan.FromMilliseconds(100);
         }
 
+        //private void SetSimulationData()
+        //{
+        //    s.CellSize = s.SimulationFieldSize / (int)fieldSizeSlider.Value;
+        //    s.PreyCount = preyCountTextBox.Text == string.Empty ? 0 : int.Parse(preyCountTextBox.Text);
+        //    s.PredatorCount = predatorCountTextBox.Text == string.Empty ? 0 : int.Parse(predatorCountTextBox.Text);
+
+        //    EntityTemplate predatorSettings = new EntityTemplate
+        //    {
+        //        BreedWith2Parents = BreedWith2ParentsCheckBox_Predator.IsChecked.GetValueOrDefault(),
+        //        CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Predator.IsChecked ?? false ? CriticalAmountOfNeighborsPredator_NumericBox.Value : 9,
+        //        MovingIterations = MovingIterationsPredator_NumericBox.Value,
+        //        BreedingIterations = (BreedingIterationsPredatorMin_NumericBox.Value, BreedingIterationsPredatorMax_NumericBox.Value),
+        //        LifeTime = (LifeTimePredatorMin_NumericBox.Value, LifeTimePredatorMax_NumericBox.Value),
+        //        AmountOfEnergy = (AmountOfEnergyPredatorMin_NumericBox.Value, AmountOfEnergyPredatorMax_NumericBox.Value)
+        //    };
+
+        //    EntityTemplate preySettings = new EntityTemplate
+        //    {
+        //        BreedWith2Parents = BreedWith2ParentsCheckBox_Prey.IsChecked.GetValueOrDefault(),
+        //        CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Prey.IsChecked ?? false ? CriticalAmountOfNeighborsPrey_NumericBox.Value : 9,
+        //        MovingIterations = MovingIterationsPrey_NumericBox.Value,
+        //        BreedingIterations = (BreedingIterationsPreyMin_NumericBox.Value, BreedingIterationsPreyMax_NumericBox.Value),
+        //        LifeTime = (LifeTimePreyMin_NumericBox.Value, LifeTimePreyMax_NumericBox.Value)
+        //    };
+
+        //    s.PredatorSettings = predatorSettings;
+        //    s.PreySettings = preySettings;
+        //}
+        
         private void SetSimulationData()
         {
-            s.CellSize = s.SimulationFieldSize / (int)fieldSizeSlider.Value;
-            s.PreyCount = preyCountTextBox.Text == string.Empty ? 0 : int.Parse(preyCountTextBox.Text);
-            s.PredatorCount = predatorCountTextBox.Text == string.Empty ? 0 : int.Parse(predatorCountTextBox.Text);
+            s.CellSize = s.SimulationFieldSize / (double)entitiesPreset.AreaWidth;
+            s.PreysCount = entitiesPreset.PreysCount;
+            s.PredatorsCount = entitiesPreset.PredatorsCount;
 
             EntityTemplate predatorSettings = new EntityTemplate
             {
-                BreedWith2Parents = BreedWith2ParentsCheckBox_Predator.IsChecked.GetValueOrDefault(),
-                CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Predator.IsChecked ?? false ? CriticalAmountOfNeighborsPredator_NumericBox.Value : 9,
-                MovingIterations = MovingIterationsPredator_NumericBox.Value,
-                BreedingIterations = (BreedingIterationsPredatorMin_NumericBox.Value, BreedingIterationsPredatorMax_NumericBox.Value),
-                LifeTime = (LifeTimePredatorMin_NumericBox.Value, LifeTimePredatorMax_NumericBox.Value),
-                AmountOfEnergy = (AmountOfEnergyPredatorMin_NumericBox.Value, AmountOfEnergyPredatorMax_NumericBox.Value)
+                BreedWith2Parents = entitiesPreset.BreedingWith2ParentsPredator,
+                CriticalAmountOfNeighbors = entitiesPreset.CriticalAmountOfNeighborsPredator,
+                MovingIterations = entitiesPreset.MovingIterationsPredator,
+                BreedingIterations = (entitiesPreset.BreedingIterationsPredatorMin, entitiesPreset.BreedingIterationsPredatorMax),
+                LifeTime = (entitiesPreset.LifeTimePredatorMin, entitiesPreset.LifeTimePredatorMax),
+                AmountOfEnergy = (entitiesPreset.AmountOfEnergyPredatorMin, entitiesPreset.AmountOfEnergyPredatorMax)
             };
 
             EntityTemplate preySettings = new EntityTemplate
             {
-                BreedWith2Parents = BreedWith2ParentsCheckBox_Prey.IsChecked.GetValueOrDefault(),
-                CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Prey.IsChecked ?? false ? CriticalAmountOfNeighborsPrey_NumericBox.Value : 9,
-                MovingIterations = MovingIterationsPrey_NumericBox.Value,
-                BreedingIterations = (BreedingIterationsPreyMin_NumericBox.Value, BreedingIterationsPreyMax_NumericBox.Value),
-                LifeTime = (LifeTimePreyMin_NumericBox.Value, LifeTimePreyMax_NumericBox.Value)
+                BreedWith2Parents = entitiesPreset.BreedingWith2ParentsPrey,
+                CriticalAmountOfNeighbors = entitiesPreset.CriticalAmountOfNeighborsPrey,
+                MovingIterations = entitiesPreset.MovingIterationsPrey,
+                BreedingIterations = (entitiesPreset.BreedingIterationsPreyMin, entitiesPreset.BreedingIterationsPreyMax),
+                LifeTime = (entitiesPreset.LifeTimePreyMin, entitiesPreset.LifeTimePreyMax)
             };
 
             s.PredatorSettings = predatorSettings;
@@ -94,7 +126,7 @@ namespace LifeGame.Windows
 
             SetSimulationData();
 
-            if (Math.Pow(fieldSizeSlider.Value, 2) < s.PreyCount + s.PredatorCount)
+            if (Math.Pow(fieldSizeSlider.Value, 2) < s.PreysCount + s.PredatorsCount)
             {
                 if (timer.IsEnabled) timer.Stop();
 

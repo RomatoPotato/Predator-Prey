@@ -12,7 +12,7 @@
     <Window.CommandBindings>
         <CommandBinding Command="local:Commands.OpenChart" Executed="CommandBinding_Executed" />
     </Window.CommandBindings>
-    <DockPanel LastChildFill="True">
+    <DockPanel LastChildFill="True" Name="EntityConfig">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_Файл"/>
             <MenuItem Header="_График">
@@ -20,7 +20,7 @@
             </MenuItem>
         </Menu>
         <ToolBar Height="30" DockPanel.Dock="Top">
-            <Button Name="FillFiledButton" Content="Заполнить поле" Click="FillFieldButton_Click" />
+            <Button Name="FillFiledButton" Content="Заполнить поле" Click="FillFieldButton_Click" IsEnabled="{Binding Path=HasNoErrors, UpdateSourceTrigger=PropertyChanged}" />
             <Button Name="MoveButton" Content="Движение" Click="MoveButton_Click"/>
             <Button Name="PlayButton" Content="Пуск" Click="PlayButton_Click" />
             <Button Name="StopButton" Content="Стоп" Click="StopButton_Click" />
@@ -44,7 +44,7 @@
             <Grid Width="600" Height="600" Margin="5">
                 <Image Name="SimulationField" />
             </Grid>
-            <DockPanel Grid.Column="1" LastChildFill="True" Background="#FFB4CFFF" Name="EntityConfig" >
+            <DockPanel Grid.Column="1" LastChildFill="True" Background="#FFB4CFFF" >
                 <DockPanel Margin="5" LastChildFill="True">
                     <Grid DockPanel.Dock="Top">
                         <Grid.ColumnDefinitions>
@@ -58,12 +58,12 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Ширина поля" />
-                        <Slider Grid.Row="0" Grid.Column="1" Minimum="6" Value="64" Maximum="150" Name="fieldSizeSlider" IsSnapToTickEnabled="True" TickFrequency="1" />
-                        <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding ElementName=fieldSizeSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
+                        <Slider Grid.Row="0" Grid.Column="1" Minimum="6" Value="{Binding Path=AreaWidth, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Maximum="150" Name="fieldSizeSlider" IsSnapToTickEnabled="True" TickFrequency="1" />
+                        <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding ElementName=fieldSizeSlider, Path=Value}" IsEnabled="False" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Количество хищников" />
-                        <TextBox Grid.Row="1" Grid.Column="2" Text="50" Name="predatorCountTextBox" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
+                        <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Path=PredatorsCount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Name="predatorCountTextBox" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Количество жертв" />
-                        <TextBox Grid.Row="2" Grid.Column="3" Text="4000" Name="preyCountTextBox" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
+                        <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Path=PreysCount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Name="preyCountTextBox" PreviewTextInput="NumbersTextBox_PreviewTextInput" />
                     </Grid>
                     <Grid DockPanel.Dock="Top">
                         <Grid.ColumnDefinitions>
@@ -88,35 +88,35 @@
                         <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="Хищники" HorizontalAlignment="Center" />
                         <TextBlock Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="3" Text="Жертвы" HorizontalAlignment="Center" />
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Смерть от перенаселения" />
-                        <CheckBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Name="DeathByOverpopulatingCheckBox_Predator" />
-                        <CheckBox Grid.Row="1" Grid.Column="4" HorizontalAlignment="Center" Name="DeathByOverpopulatingCheckBox_Prey" />
+                        <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding Path=DeathByOverpopulationPredator, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Name="DeathByOverpopulatingCheckBox_Predator" />
+                        <CheckBox Grid.Row="1" Grid.Column="4" IsChecked="{Binding Path=DeathByOverpopulationPrey, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Name="DeathByOverpopulatingCheckBox_Prey" />
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Критическое количество соседей" />
-                        <add:NumericBox x:Name="CriticalAmountOfNeighborsPredator_NumericBox" IsEnabled="{Binding ElementName=DeathByOverpopulatingCheckBox_Predator, Path=IsChecked}" Grid.Row="2" Grid.Column="1" Value="8" MinValue="0" MaxValue="8" />
-                        <add:NumericBox x:Name="CriticalAmountOfNeighborsPrey_NumericBox" IsEnabled="{Binding ElementName=DeathByOverpopulatingCheckBox_Prey, Path=IsChecked}" Grid.Row="2" Grid.Column="4" Value="8" MinValue="0" MaxValue="8" />
+                        <add:NumericBox x:Name="CriticalAmountOfNeighborsPredator_NumericBox" IsEnabled="{Binding ElementName=DeathByOverpopulatingCheckBox_Predator, Path=IsChecked}" Grid.Row="2" Grid.Column="1" Value="{Binding Path=CriticalAmountOfNeighborsPredator, UpdateSourceTrigger=PropertyChanged}" MinValue="0" MaxValue="8" />
+                        <add:NumericBox x:Name="CriticalAmountOfNeighborsPrey_NumericBox" IsEnabled="{Binding ElementName=DeathByOverpopulatingCheckBox_Prey, Path=IsChecked}" Grid.Row="2" Grid.Column="4" Value="{Binding Path=CriticalAmountOfNeighborsPrey, UpdateSourceTrigger=PropertyChanged}" MinValue="0" MaxValue="8" />
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="Потомство от двух родителей" />
-                        <CheckBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" Name="BreedWith2ParentsCheckBox_Predator" />
-                        <CheckBox Grid.Row="3" Grid.Column="4" HorizontalAlignment="Center" Name="BreedWith2ParentsCheckBox_Prey" />
+                        <CheckBox IsChecked="{Binding Path=BreedingWith2ParentsPredator, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" Name="BreedWith2ParentsCheckBox_Predator" />
+                        <CheckBox IsChecked="{Binding Path=BreedingWith2ParentsPrey, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="4" HorizontalAlignment="Center" Name="BreedWith2ParentsCheckBox_Prey" />
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="Кол-во итераций для перемещения" />
-                        <add:NumericBox x:Name="MovingIterationsPredator_NumericBox" Grid.Row="4" Grid.Column="1" Value="1" MinValue="0" MaxValue="100" />
-                        <add:NumericBox x:Name="MovingIterationsPrey_NumericBox" Grid.Row="4" Grid.Column="4" Value="5" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="MovingIterationsPredator_NumericBox" Grid.Row="4" Grid.Column="1" Value="{Binding Path=MovingIterationsPredator, UpdateSourceTrigger=PropertyChanged}" MinValue="1" MaxValue="100" />
+                        <add:NumericBox x:Name="MovingIterationsPrey_NumericBox" Grid.Row="4" Grid.Column="4" Value="{Binding Path=MovingIterationsPrey, UpdateSourceTrigger=PropertyChanged}" MinValue="1" MaxValue="100" />
                         <TextBlock Grid.Row="5" Grid.Column="0" Text="Кол-во итераций для размножения" />
-                        <add:NumericBox x:Name="BreedingIterationsPredatorMin_NumericBox" Grid.Row="5" Grid.Column="1" Value="10" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="BreedingIterationsPredatorMin_NumericBox" Grid.Row="5" Grid.Column="1" Value="{Binding Path=BreedingIterationsPredatorMin, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="100" />
                         <TextBlock Grid.Row="5" Grid.Column="2" Text="-" HorizontalAlignment="Center" />
-                        <add:NumericBox x:Name="BreedingIterationsPredatorMax_NumericBox" Grid.Row="5" Grid.Column="3" Value="12" MinValue="0" MaxValue="100" />
-                        <add:NumericBox x:Name="BreedingIterationsPreyMin_NumericBox" Grid.Row="5" Grid.Column="4" Value="5" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="BreedingIterationsPredatorMax_NumericBox" Grid.Row="5" Grid.Column="3" Value="{Binding Path=BreedingIterationsPredatorMax, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="100" />
+                        <add:NumericBox x:Name="BreedingIterationsPreyMin_NumericBox" Grid.Row="5" Grid.Column="4" Value="{Binding Path=BreedingIterationsPreyMin, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="100" />
                         <TextBlock Grid.Row="5" Grid.Column="5" Text="-" HorizontalAlignment="Center" />
-                        <add:NumericBox x:Name="BreedingIterationsPreyMax_NumericBox" Grid.Row="5" Grid.Column="6" Value="8" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="BreedingIterationsPreyMax_NumericBox" Grid.Row="5" Grid.Column="6" Value="{Binding Path=BreedingIterationsPreyMax, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="100" />
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="Время жизни" />
-                        <add:NumericBox x:Name="LifeTimePredatorMin_NumericBox" Grid.Row="6" Grid.Column="1" Value="30" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="LifeTimePredatorMin_NumericBox" Grid.Row="6" Grid.Column="1" Value="{Binding Path=LifeTimePredatorMin, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="100" />
                         <TextBlock Grid.Row="6" Grid.Column="2" Text="-" HorizontalAlignment="Center" />
-                        <add:NumericBox x:Name="LifeTimePredatorMax_NumericBox" Grid.Row="6" Grid.Column="3" Value="40" MinValue="0" MaxValue="100" />
-                        <add:NumericBox x:Name="LifeTimePreyMin_NumericBox" Grid.Row="6" Grid.Column="4" Value="15" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="LifeTimePredatorMax_NumericBox" Grid.Row="6" Grid.Column="3" Value="{Binding Path=LifeTimePredatorMax, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="100" />
+                        <add:NumericBox x:Name="LifeTimePreyMin_NumericBox" Grid.Row="6" Grid.Column="4" Value="{Binding Path=LifeTimePreyMin, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="100" />
                         <TextBlock Grid.Row="6" Grid.Column="5" Text="-" HorizontalAlignment="Center" />
-                        <add:NumericBox x:Name="LifeTimePreyMax_NumericBox" Grid.Row="6" Grid.Column="6" Value="20" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="LifeTimePreyMax_NumericBox" Grid.Row="6" Grid.Column="6" Value="{Binding Path=LifeTimePreyMax, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="100" />
                         <TextBlock Grid.Row="7" Grid.Column="0" Text="Количество энергии" />
-                        <add:NumericBox x:Name="AmountOfEnergyPredatorMin_NumericBox" Grid.Row="7" Grid.Column="1" Value="8" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="AmountOfEnergyPredatorMin_NumericBox" Grid.Row="7" Grid.Column="1" Value="{Binding Path=AmountOfEnergyPredatorMin, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="100" />
                         <TextBlock Grid.Row="7" Grid.Column="2" Text="-" HorizontalAlignment="Center" />
-                        <add:NumericBox x:Name="AmountOfEnergyPredatorMax_NumericBox" Grid.Row="7" Grid.Column="3" Value="10" MinValue="0" MaxValue="100" />
+                        <add:NumericBox x:Name="AmountOfEnergyPredatorMax_NumericBox" Grid.Row="7" Grid.Column="3" Value="{Binding Path=AmountOfEnergyPredatorMax, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="100" />
                     </Grid>
                     <WrapPanel DockPanel.Dock="Top" Height="200" VerticalAlignment="Bottom" Background="White">
                         <chart:ChartingElement Height="190" Width="430" x:Name="ChartingElement" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" />

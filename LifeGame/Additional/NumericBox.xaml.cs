@@ -8,16 +8,20 @@ namespace LifeGame.Additional
 {
     public partial class NumericBox : UserControl
     {
-        public int MinValue { get; set; }
-        public int MaxValue { get; set; }
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
+            "Value",
+            typeof(int),
+            typeof(NumericBox),
+            new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public int Value
         {
-            get { return (int)GetValue(ValueProperty); }
+            get => (int)GetValue(ValueProperty);
             set => SetValue(ValueProperty, Math.Clamp(value, MinValue, MaxValue));
         }
 
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register("Value", typeof(int), typeof(NumericBox));
+        public int MinValue { get; set; }
+        public int MaxValue { get; set; }
 
         private Regex onlyNumbersRegex = new Regex(@"\D");
 

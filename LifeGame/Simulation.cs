@@ -16,26 +16,24 @@ namespace LifeGame
         private Image simulationField;
 
         public int SimulationFieldSize { get; set; } = 600;
-        public int CellSize { get; set; } = 10;
-        public int PreyCount { get; set; } = 500;
-        public int PredatorCount { get; set; } = 500;
+        public double CellSize { get; set; }
+        public int PreysCount { get; set; }
+        public int PredatorsCount { get; set; }
         public EntityTemplate PredatorSettings { get; set; }
         public EntityTemplate PreySettings { get; set; }
 
         public Simulation(Image simulationField)
         {
             this.simulationField = simulationField;
-
-            entities = new Entity[SimulationFieldSize / CellSize][];
         }
 
         public void PlaceEntities()
         {
-            entities = new Entity[SimulationFieldSize / CellSize][];
+            entities = new Entity[(int)(SimulationFieldSize / CellSize)][];
             Iterations = 0;
 
-            int predators = PredatorCount;
-            int preys = PreyCount;
+            int predators = PredatorsCount;
+            int preys = PreysCount;
 
             for (int i = 0; i < entities.Length; i++)
             {
