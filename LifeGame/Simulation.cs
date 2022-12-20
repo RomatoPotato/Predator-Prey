@@ -11,16 +11,15 @@ namespace LifeGame
     internal class Simulation
     {
         public int Iterations { get; set; } = 0;
-
-        private Entity[][] entities;
-        private Image simulationField;
-
         public int SimulationFieldSize { get; set; } = 600;
         public double CellSize { get; set; }
         public int PreysCount { get; set; }
         public int PredatorsCount { get; set; }
         public EntityTemplate PredatorSettings { get; set; }
         public EntityTemplate PreySettings { get; set; }
+
+        private Entity[][] entities;
+        private Image simulationField;
 
         public Simulation(Image simulationField)
         {
@@ -81,21 +80,16 @@ namespace LifeGame
             {
                 for (int y = 0; y < entities[x].Length; y++)
                 {
-                    Entity currentEntity = entities[x][y];
+                    entities[x][y]?.Consume(ref entities, x, y);
 
-                    if (currentEntity is not null)
+                    if (Iterations % entities[x][y]?.BreedingIterations == 0)
                     {
-                        currentEntity.Consume(ref entities, x, y);
+                        entities[x][y]?.Breed(ref entities, x, y);
+                    }
 
-                        if (Iterations % currentEntity.BreedingIterations == 0)
-                        {
-                            currentEntity.Breed(ref entities, x, y);
-                        }
-
-                        if (Iterations % currentEntity.MovingIterations == 0)
-                        {
-                            currentEntity.Move(ref entities, x, y);
-                        }
+                    if (Iterations % entities[x][y]?.MovingIterations == 0)
+                    {
+                        entities[x][y]?.Move(ref entities, x, y);
                     }
                 }
             }
@@ -104,16 +98,14 @@ namespace LifeGame
             {
                 for (int y = 0; y < entities[x].Length; y++)
                 {
-                    Entity currentEntity = entities[x][y];
-
-                    if (currentEntity is not null)
+                    if (entities[x][y] is not null)
                     {
-                        currentEntity.IsBorn = false;
-                        currentEntity.IsGaveBirth = false;
-                        currentEntity.IsMoved = false;
-                        currentEntity.IsEaten = false;
+                        entities[x][y].IsBorn = false;
+                        entities[x][y].IsGaveBirth = false;
+                        entities[x][y].IsMoved = false;
+                        entities[x][y].IsEaten = false;
 
-                        currentEntity.DeathCheck(ref entities, x, y);
+                        entities[x][y].DeathCheck(ref entities, x, y);
 
                         //if (iterations % currentEntity.MovingIterations == 0)
                         //{

@@ -12,7 +12,7 @@
     <Window.CommandBindings>
         <CommandBinding Command="local:Commands.OpenChart" Executed="CommandBinding_Executed" />
     </Window.CommandBindings>
-    <DockPanel LastChildFill="True" Name="EntityConfig">
+    <DockPanel LastChildFill="True" Name="MainPanel">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_Файл"/>
             <MenuItem Header="_График">
@@ -44,7 +44,7 @@
             <Grid Width="600" Height="600" Margin="5">
                 <Image Name="SimulationField" />
             </Grid>
-            <DockPanel Grid.Column="1" LastChildFill="True" Background="#FFB4CFFF" >
+            <DockPanel Grid.Column="1" LastChildFill="True" Background="#FFB4CFFF" Name="EntityConfigPanel">
                 <DockPanel Margin="5" LastChildFill="True">
                     <Grid DockPanel.Dock="Top">
                         <Grid.ColumnDefinitions>

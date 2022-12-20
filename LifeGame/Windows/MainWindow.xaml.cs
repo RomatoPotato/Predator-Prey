@@ -47,7 +47,7 @@ namespace LifeGame.Windows
                 HasNoErrors = true
             };
 
-            EntityConfig.DataContext = entitiesPreset;
+            MainPanel.DataContext = entitiesPreset;
 
             s = new Simulation(SimulationField);
             SetSimulationData();
@@ -61,35 +61,6 @@ namespace LifeGame.Windows
             timer.Tick += DoStep;
             timer.Interval = TimeSpan.FromMilliseconds(100);
         }
-
-        //private void SetSimulationData()
-        //{
-        //    s.CellSize = s.SimulationFieldSize / (int)fieldSizeSlider.Value;
-        //    s.PreyCount = preyCountTextBox.Text == string.Empty ? 0 : int.Parse(preyCountTextBox.Text);
-        //    s.PredatorCount = predatorCountTextBox.Text == string.Empty ? 0 : int.Parse(predatorCountTextBox.Text);
-
-        //    EntityTemplate predatorSettings = new EntityTemplate
-        //    {
-        //        BreedWith2Parents = BreedWith2ParentsCheckBox_Predator.IsChecked.GetValueOrDefault(),
-        //        CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Predator.IsChecked ?? false ? CriticalAmountOfNeighborsPredator_NumericBox.Value : 9,
-        //        MovingIterations = MovingIterationsPredator_NumericBox.Value,
-        //        BreedingIterations = (BreedingIterationsPredatorMin_NumericBox.Value, BreedingIterationsPredatorMax_NumericBox.Value),
-        //        LifeTime = (LifeTimePredatorMin_NumericBox.Value, LifeTimePredatorMax_NumericBox.Value),
-        //        AmountOfEnergy = (AmountOfEnergyPredatorMin_NumericBox.Value, AmountOfEnergyPredatorMax_NumericBox.Value)
-        //    };
-
-        //    EntityTemplate preySettings = new EntityTemplate
-        //    {
-        //        BreedWith2Parents = BreedWith2ParentsCheckBox_Prey.IsChecked.GetValueOrDefault(),
-        //        CriticalAmountOfNeighbors = DeathByOverpopulatingCheckBox_Prey.IsChecked ?? false ? CriticalAmountOfNeighborsPrey_NumericBox.Value : 9,
-        //        MovingIterations = MovingIterationsPrey_NumericBox.Value,
-        //        BreedingIterations = (BreedingIterationsPreyMin_NumericBox.Value, BreedingIterationsPreyMax_NumericBox.Value),
-        //        LifeTime = (LifeTimePreyMin_NumericBox.Value, LifeTimePreyMax_NumericBox.Value)
-        //    };
-
-        //    s.PredatorSettings = predatorSettings;
-        //    s.PreySettings = preySettings;
-        //}
         
         private void SetSimulationData()
         {
@@ -116,6 +87,9 @@ namespace LifeGame.Windows
                 LifeTime = (entitiesPreset.LifeTimePreyMin, entitiesPreset.LifeTimePreyMax)
             };
 
+            if (!DeathByOverpopulatingCheckBox_Predator.IsChecked ?? default) predatorSettings.CriticalAmountOfNeighbors = 8;
+            if (!DeathByOverpopulatingCheckBox_Prey.IsChecked ?? default) preySettings.CriticalAmountOfNeighbors = 8;
+
             s.PredatorSettings = predatorSettings;
             s.PreySettings = preySettings;
         }
@@ -125,14 +99,6 @@ namespace LifeGame.Windows
             if (timer.IsEnabled) timer.Stop();
 
             SetSimulationData();
-
-            if (Math.Pow(fieldSizeSlider.Value, 2) < s.PreysCount + s.PredatorsCount)
-            {
-                if (timer.IsEnabled) timer.Stop();
-
-                MessageBox.Show("Общее количество хищников и жертв превышает размер поля!", null, MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
 
             chart.ClearAllCharts();
             CoordsManager.CreateInfoFile();
@@ -171,11 +137,15 @@ namespace LifeGame.Windows
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
             timer.Start();
+
+            EntityConfigPanel.IsEnabled = false;
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
             timer.Stop();
+
+            EntityConfigPanel.IsEnabled = true;
         }
 
         private void CommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)

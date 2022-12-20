@@ -11,21 +11,48 @@
         <Style TargetType="addit:NumericBox">
             <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="Width" Value="50" />
-            <!--<Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="BorderBrush" Value="LightGray" />
-                </Trigger>
-            </Style.Triggers>-->
         </Style>
         <Style TargetType="TextBox">
             <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="Width" Value="40" />
         </Style>
-        <Style TargetType="Slider">
-            <Setter Property="Margin" Value="0,0,0,4" />
-        </Style>
         <Style TargetType="CheckBox">
             <Setter Property="Margin" Value="0,0,0,4" />
+        </Style>
+        <Style TargetType="Slider">
+            <Setter Property="Margin" Value="0,0,0,4" />
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <DockPanel>
+                            <TextBlock Foreground="Red" Text="⚠" FontWeight="Bold" ToolTip="{Binding ElementName=controlWithError,
+                                Path=AdornedElement.(Validation.Errors)[0].ErrorContent}" ToolTipService.InitialShowDelay="100" />
+                            <Border BorderBrush="Red" BorderThickness="1">
+                                <AdornedElementPlaceholder Name="controlWithError" />
+                            </Border>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+                    <Setter Property="ToolTipService.InitialShowDelay" Value="100" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="ToolTip">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip">
+                        <Border BorderThickness="1" BorderBrush="Red"
+                                Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter Margin="4" TextBlock.Foreground="Red" TextBlock.FontWeight="SemiBold" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Application.Resources>
 </Application>
