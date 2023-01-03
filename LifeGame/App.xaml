@@ -5,35 +5,26 @@
              xmlns:addit="clr-namespace:LifeGame.Additional"
              StartupUri="/Windows/MainWindow.xaml">
     <Application.Resources>
-        <Style TargetType="TextBlock">
+        <Style TargetType="{x:Type TextBlock}">
             <Setter Property="Margin" Value="0,0,0,4" />
+            <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
         </Style>
-        <Style TargetType="addit:NumericBox">
+        <Style TargetType="{x:Type addit:NumericBox}">
             <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="Width" Value="50" />
+            <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
         </Style>
-        <Style TargetType="TextBox">
+        <Style TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="Width" Value="40" />
+            <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
         </Style>
-        <Style TargetType="CheckBox">
+        <Style TargetType="{x:Type CheckBox}">
             <Setter Property="Margin" Value="0,0,0,4" />
+            <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
         </Style>
-        <Style TargetType="Slider">
+        <Style TargetType="{x:Type Slider}">
             <Setter Property="Margin" Value="0,0,0,4" />
-            <Setter Property="Validation.ErrorTemplate">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <DockPanel>
-                            <TextBlock Foreground="Red" Text="⚠" FontWeight="Bold" ToolTip="{Binding ElementName=controlWithError,
-                                Path=AdornedElement.(Validation.Errors)[0].ErrorContent}" ToolTipService.InitialShowDelay="100" />
-                            <Border BorderBrush="Red" BorderThickness="1">
-                                <AdornedElementPlaceholder Name="controlWithError" />
-                            </Border>
-                        </DockPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="True">
                     <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}" />
@@ -41,18 +32,17 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style TargetType="ToolTip">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ToolTip">
-                        <Border BorderThickness="1" BorderBrush="Red"
-                                Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
-                                Background="{TemplateBinding Background}">
-                            <ContentPresenter Margin="4" TextBlock.Foreground="Red" TextBlock.FontWeight="SemiBold" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
         </Style>
+        <Image x:Key="PlayButton" Source="/Resources/PlayButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
+        <Image x:Key="StopButton" Source="/Resources/StopButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
+        <Image x:Key="PauseButton" Source="/Resources/PauseButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
+        <Image x:Key="ResetButton" Source="/Resources/ResetButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
+        <Image x:Key="NextStepButton" Source="/Resources/NextStepButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
+        <Image x:Key="NextStepButtonDisabled" Source="/Resources/NextStepButton_disabled.png"  RenderOptions.BitmapScalingMode="HighQuality" />
+        <Image x:Key="EditButton" Source="/Resources/EditButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
+        <Image x:Key="RandomButton" Source="/Resources/RandomButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
+        <Image x:Key="RandomButtonDisabled" Source="/Resources/RandomButton_disabled.png" RenderOptions.BitmapScalingMode="HighQuality" />
     </Application.Resources>
 </Application>

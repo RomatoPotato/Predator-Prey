@@ -8,7 +8,31 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\heart_icon.png" />
+    <None Remove="Resources\EditButton.png" />
+    <None Remove="Resources\HeartIcon.png" />
+    <None Remove="Resources\NextStepButton.png" />
+    <None Remove="Resources\NextStepButton_disabled.png" />
+    <None Remove="Resources\PauseButton.png" />
+    <None Remove="Resources\PlayButton.png" />
+    <None Remove="Resources\RandomButton.png" />
+    <None Remove="Resources\RandomButton_disabled.png" />
+    <None Remove="Resources\ResetButton.png" />
+    <None Remove="Resources\StopButton.png" />
+    <None Remove="Windows\HeartIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\EditButton.png" />
+    <Resource Include="Resources\HeartIcon.png" />
+    <Resource Include="Resources\NextStepButton.png" />
+    <Resource Include="Resources\NextStepButton_disabled.png" />
+    <Resource Include="Resources\PauseButton.png" />
+    <Resource Include="Resources\PlayButton.png" />
+    <Resource Include="Resources\RandomButton.png" />
+    <Resource Include="Resources\RandomButton_disabled.png" />
+    <Resource Include="Resources\ResetButton.png" />
+    <Resource Include="Resources\StopButton.png" />
+    <Resource Include="Windows\HeartIcon.png" />
   </ItemGroup>
 
 </Project>

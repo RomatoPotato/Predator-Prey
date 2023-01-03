@@ -74,67 +74,111 @@ namespace LifeGame.AppData
         public int AreaWidth
 		{
 			get { return areaWidth; }
-			set { areaWidth = value; }
+			set
+            {
+                areaWidth = value;
+                OnPropertyChanged();
+            }
         }
 
         public int PredatorsCount
         {
             get { return predatorsCount; }
-            set { predatorsCount = value; }
+            set
+            { 
+                predatorsCount = value;
+                OnPropertyChanged();
+            }
         }
 
         public int PreysCount
         {
             get { return preysCount; }
-            set { preysCount = value; }
+            set
+            {
+                preysCount = value;
+                OnPropertyChanged();
+            }
         }
 
         public bool DeathByOverpopulationPredator
         {
             get { return deathByOverpopulationPredator; }
-            set { deathByOverpopulationPredator = value; }
+            set 
+            {
+                deathByOverpopulationPredator = value;
+                OnPropertyChanged();
+            }
         }
 
         public bool DeathByOverpopulationPrey
         {
             get { return deathByOverpopulationPrey; }
-            set { deathByOverpopulationPrey = value; }
+            set
+            {
+                deathByOverpopulationPrey = value;
+                OnPropertyChanged();
+            }
         }
 
         public int CriticalAmountOfNeighborsPredator
         {
             get { return criticalAmountOfNeighborsPredator; }
-            set { criticalAmountOfNeighborsPredator = value; }
+            set
+            {
+                criticalAmountOfNeighborsPredator = value;
+                OnPropertyChanged();
+            }
         }
         
         public int CriticalAmountOfNeighborsPrey
         {
             get { return criticalAmountOfNeighborsPrey; }
-            set { criticalAmountOfNeighborsPrey = value; }
+            set 
+            { 
+                criticalAmountOfNeighborsPrey = value;
+                OnPropertyChanged();
+            }
         }
 
         public bool BreedingWith2ParentsPredator
         {
             get { return breedingWith2ParentsPredator; }
-            set { breedingWith2ParentsPredator = value; }
+            set 
+            {
+                breedingWith2ParentsPredator = value;
+                OnPropertyChanged();
+            }
         }
 
         public bool BreedingWith2ParentsPrey
         {
             get { return breedingWith2ParentsPrey; }
-            set { breedingWith2ParentsPrey = value; }
+            set 
+            {
+                breedingWith2ParentsPrey = value;
+                OnPropertyChanged();
+            }
         }
 
         public int MovingIterationsPredator
         {
             get { return movingIterationsPredator; }
-            set { movingIterationsPredator = value; }
+            set 
+            {
+                movingIterationsPredator = value;
+                OnPropertyChanged();
+            }
         }
         
         public int MovingIterationsPrey
         {
             get { return movingIterationsPrey; }
-            set { movingIterationsPrey = value; }
+            set
+            {
+                movingIterationsPrey = value;
+                OnPropertyChanged();
+            }
         }
 
         public int BreedingIterationsPredatorMin
@@ -143,6 +187,7 @@ namespace LifeGame.AppData
             set 
             {
                 breedingIterationsPredatorMin = breedingIterationsPredatorMax == 0 ? value : Math.Min(value, Math.Max(1, breedingIterationsPredatorMax));
+                OnPropertyChanged();
             }
         }
         
@@ -152,6 +197,7 @@ namespace LifeGame.AppData
             set
             { 
                 breedingIterationsPredatorMax = Math.Max(breedingIterationsPredatorMin, value);
+                OnPropertyChanged();
             }
         }
         
@@ -161,6 +207,7 @@ namespace LifeGame.AppData
             set
             {
                 breedingIterationsPreyMin = breedingIterationsPreyMax == 0 ? value : Math.Min(value, Math.Max(1, breedingIterationsPreyMax));
+                OnPropertyChanged();
             }
         }
         
@@ -170,6 +217,7 @@ namespace LifeGame.AppData
             set
             {
                 breedingIterationsPreyMax = Math.Max(breedingIterationsPreyMin, value);
+                OnPropertyChanged();
             }
         }
 
@@ -179,6 +227,7 @@ namespace LifeGame.AppData
             set
             {
                 lifeTimePredatorMin = lifeTimePredatorMax == 0 ? value : Math.Min(value, Math.Max(1, lifeTimePredatorMax));
+                OnPropertyChanged();
             }
         }
         
@@ -188,6 +237,7 @@ namespace LifeGame.AppData
             set
             {
                 lifeTimePredatorMax = Math.Max(lifeTimePredatorMin, value);
+                OnPropertyChanged();
             }
         }
         
@@ -197,6 +247,7 @@ namespace LifeGame.AppData
             set
             {
                 lifeTimePreyMin = lifeTimePreyMax == 0 ? value : Math.Min(value, Math.Max(1, lifeTimePreyMax));
+                OnPropertyChanged();
             }
         }
         
@@ -206,6 +257,7 @@ namespace LifeGame.AppData
             set
             {
                 lifeTimePreyMax = Math.Max(lifeTimePreyMin, value);
+                OnPropertyChanged();
             }
         }
         
@@ -215,6 +267,7 @@ namespace LifeGame.AppData
             set
             {
                 amountOfEnergyPredatorMin = amountOfEnergyPredatorMax == 0 ? value : Math.Min(value, Math.Max(1, amountOfEnergyPredatorMax));
+                OnPropertyChanged();
             }
         }
         
@@ -224,6 +277,7 @@ namespace LifeGame.AppData
             set
             {
                 amountOfEnergyPredatorMax = Math.Max(amountOfEnergyPredatorMin, value);
+                OnPropertyChanged();
             }
         }
 

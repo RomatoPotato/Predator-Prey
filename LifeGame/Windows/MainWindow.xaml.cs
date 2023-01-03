@@ -1,6 +1,7 @@
 ﻿using LifeGame.AppData;
 using LifeGame.Charting;
 using LifeGame.Entities;
+using Microsoft.Win32;
 using System;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -12,10 +13,13 @@ namespace LifeGame.Windows
 {
     public partial class MainWindow : Window
     {
-        Simulation s;
-        Chart chart;
-        DispatcherTimer timer;
-        EntitiesPreset entitiesPreset;
+        private Simulation sim;
+        private Chart chart;
+        private DispatcherTimer timer;
+        private EntitiesPreset entitiesPreset;
+
+        private bool isPlayed = false;
+        private Entity[][] entities;
 
         public MainWindow()
         {
@@ -49,24 +53,23 @@ namespace LifeGame.Windows
 
             MainPanel.DataContext = entitiesPreset;
 
-            s = new Simulation(SimulationField);
+            timer = new DispatcherTimer(DispatcherPriority.Send);
+            timer.Tick += DoStep;
+            timer.Interval = TimeSpan.FromMilliseconds(100);
+
+            sim = new Simulation(SimulationField);
             SetSimulationData();
-            s.PlaceEntities();
 
             chart = new Chart(ChartingElement);
             chart.AddChart("Predator", 200, 2, Brushes.Black);
             chart.AddChart("Prey", 200, 2, Brushes.Green);
-
-            timer = new DispatcherTimer(DispatcherPriority.Send);
-            timer.Tick += DoStep;
-            timer.Interval = TimeSpan.FromMilliseconds(100);
         }
         
-        private void SetSimulationData()
+        private void SetSimulationData(bool isReset = false)
         {
-            s.CellSize = s.SimulationFieldSize / (double)entitiesPreset.AreaWidth;
-            s.PreysCount = entitiesPreset.PreysCount;
-            s.PredatorsCount = entitiesPreset.PredatorsCount;
+            sim.CellSize = sim.SimulationFieldSize / (double)entitiesPreset.AreaWidth;
+            sim.PreysCount = entitiesPreset.PreysCount;
+            sim.PredatorsCount = entitiesPreset.PredatorsCount;
 
             EntityTemplate predatorSettings = new EntityTemplate
             {
@@ -90,30 +93,40 @@ namespace LifeGame.Windows
             if (!DeathByOverpopulatingCheckBox_Predator.IsChecked ?? default) predatorSettings.CriticalAmountOfNeighbors = 8;
             if (!DeathByOverpopulatingCheckBox_Prey.IsChecked ?? default) preySettings.CriticalAmountOfNeighbors = 8;
 
-            s.PredatorSettings = predatorSettings;
-            s.PreySettings = preySettings;
-        }
+            sim.PredatorSettings = predatorSettings;
+            sim.PreySettings = preySettings;
+            
+            if (isReset)
+            {
+                sim.PlaceEntities(entities);
+            }
+            else
+            {
+                sim.PlaceEntities();
 
-        private void FillFieldButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (timer.IsEnabled) timer.Stop();
+                entities = new Entity[sim.Entities.Length][];
+                for (int i = 0; i < sim.Entities.Length; i++)
+                {
+                    entities[i] = new Entity[sim.Entities.Length];
 
-            SetSimulationData();
+                    for (int j = 0; j < sim.Entities[i].Length; j++)
+                    {
+                        entities[i][j] = sim.Entities[i][j];
+                    }
+                }
+            }
 
-            chart.ClearAllCharts();
-            CoordsManager.CreateInfoFile();
-
-            s.PlaceEntities();
+            timer.Interval = TimeSpan.FromMilliseconds(SimulationSpeedSlider.Value);
         }
 
         private void NextStep()
         {
-            s.Step(ref chart);
+            sim.Step(ref chart);
 
             EntityCountTextBlock.Text = $"Хищников: {chart.ChartLastElement("Predator")}, Жертв: {chart.ChartLastElement("Prey")}";
-            IterationCountTextBlock.Text = $"Итераций: {s.Iterations}";
+            IterationCountTextBlock.Text = $"Итераций: {sim.Iterations}";
 
-            CoordsManager.WriteInfoIntoFile(s.Iterations, (int)chart.ChartLastElement("Predator"), (int)chart.ChartLastElement("Prey"));
+            CoordsManager.WriteInfoIntoFile(sim.Iterations, (int)chart.ChartLastElement("Predator"), (int)chart.ChartLastElement("Prey"));
 
             chart.DrawAllCharts();
         }
@@ -123,7 +136,7 @@ namespace LifeGame.Windows
             NextStep();
         }
 
-        private void MoveButton_Click(object sender, RoutedEventArgs e)
+        private void NextStepButton_Click(object sender, RoutedEventArgs e)
         {
             NextStep();
         }
@@ -134,28 +147,137 @@ namespace LifeGame.Windows
             e.Handled = regex.IsMatch(e.Text);
         }
 
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetSimulationData();
+            chart.ClearAllCharts();
+            CoordsManager.CreateInfoFile();
+        }
+
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            timer.Start();
+            if (isPlayed)
+            {
+                PlayButton.Content = FindResource("PlayButton");
+                PlayButton.ToolTip = "Запуск симуляции";
+                NextStepButton.IsEnabled = true;
+                timer.Stop();
+            }
+            if (!isPlayed)
+            {
+                PlayButton.Content = FindResource("PauseButton");
+                PlayButton.ToolTip = "Приостановка симуляции";
+                NextStepButton.IsEnabled = false;
+                EntityConfigPanel.IsEnabled = false;
+                RandomButton.IsEnabled = false;
+                StopButton.Visibility = Visibility.Visible;
+                ResetButton.Visibility = Visibility.Collapsed;
+                timer.Start();
+            }
 
-            EntityConfigPanel.IsEnabled = false;
+            isPlayed = !isPlayed;
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
             timer.Stop();
-
+            PlayButton.Content = FindResource("PlayButton");
+            PlayButton.ToolTip = "Запуск симуляции";
+            isPlayed = false;
             EntityConfigPanel.IsEnabled = true;
+            NextStepButton.IsEnabled = true;
+            RandomButton.IsEnabled = true;
+            StopButton.Visibility = Visibility.Collapsed;
+            ResetButton.Visibility = Visibility.Visible;
+
+            SetSimulationData(true);
+            chart.ClearAllCharts();
+            CoordsManager.CreateInfoFile();
         }
 
-        private void CommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        private void SimulationSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (timer is not null)
+            {
+                timer.Interval = TimeSpan.FromMilliseconds(SimulationSpeedSlider.Value);
+            }
+        }
+
+        private void RandomButton_Click(object sender, RoutedEventArgs e)
+        {
+            Random random = new Random();
+
+            entitiesPreset.AreaWidth = random.Next(6, 151);
+            entitiesPreset.PreysCount = random.Next(1, (int)Math.Pow(entitiesPreset.AreaWidth, 2));
+            entitiesPreset.PredatorsCount = random.Next(1, (int)Math.Pow(entitiesPreset.AreaWidth, 2) - entitiesPreset.PreysCount);
+            entitiesPreset.DeathByOverpopulationPrey = Convert.ToBoolean(random.Next(0, 2));
+            entitiesPreset.DeathByOverpopulationPredator = Convert.ToBoolean(random.Next(0, 2));
+            entitiesPreset.BreedingWith2ParentsPrey = Convert.ToBoolean(random.Next(0, 2));
+            entitiesPreset.BreedingWith2ParentsPredator = Convert.ToBoolean(random.Next(0, 2));
+            entitiesPreset.MovingIterationsPrey = random.Next(1, 100);
+            entitiesPreset.MovingIterationsPredator = random.Next(1, 100);
+            entitiesPreset.BreedingIterationsPreyMax = random.Next(1, 100);
+            entitiesPreset.BreedingIterationsPreyMin = random.Next(1, entitiesPreset.BreedingIterationsPreyMax);
+            entitiesPreset.BreedingIterationsPredatorMax = random.Next(1, 100);
+            entitiesPreset.BreedingIterationsPredatorMin = random.Next(1, entitiesPreset.BreedingIterationsPredatorMax);
+            entitiesPreset.LifeTimePreyMax = random.Next(1, 100);
+            entitiesPreset.LifeTimePreyMin = random.Next(1, entitiesPreset.LifeTimePreyMax);
+            entitiesPreset.LifeTimePredatorMax = random.Next(1, 100);
+            entitiesPreset.LifeTimePredatorMin = random.Next(1, entitiesPreset.LifeTimePredatorMax);
+            entitiesPreset.AmountOfEnergyPredatorMax = random.Next(1, 100);
+            entitiesPreset.AmountOfEnergyPredatorMin = random.Next(1, entitiesPreset.AmountOfEnergyPredatorMax);
+
+            if (entitiesPreset.DeathByOverpopulationPredator) 
+            {
+                entitiesPreset.CriticalAmountOfNeighborsPredator = random.Next(1, 9);
+            }
+            else
+            {
+                entitiesPreset.CriticalAmountOfNeighborsPredator = 8;
+            }
+
+            if (entitiesPreset.DeathByOverpopulationPrey)
+            {
+                entitiesPreset.CriticalAmountOfNeighborsPrey = random.Next(1, 9);
+            }
+            else
+            {
+                entitiesPreset.CriticalAmountOfNeighborsPrey = 8;
+            }
+
+            SetSimulationData();
+            chart.ClearAllCharts();
+            CoordsManager.CreateInfoFile();
+        }
+
+        private void CommandBindingOpenChart_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             ChartWindow chartWindow = new ChartWindow();
             chartWindow.Show();
         }
 
-        private void preyCountTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void CommandBindingOpenFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Файлы симуляции (*.sim)|*.sim";
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            
+            var result = openFileDialog.ShowDialog();
+
+            if (result.HasValue && result.Value)
+            {
+                string fileName = openFileDialog.FileName;
+            }
+        }
+
+        private void CommandBindingSaveFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //SaveFileDialog saveFileDialog = new SaveFileDialog();
+            //saveFileDialog.Filter = "Файлы симуляции (*.sim)|*.sim";
+            //saveFileDialog.InitialDirectory = Environment.CurrentDirectory;
+
+            //saveFileDialog.ShowDialog();
+
 
         }
     }

@@ -10,8 +10,8 @@ namespace LifeGame
 {
     internal class Simulation
     {
-        public int Iterations { get; set; } = 0;
-        public int SimulationFieldSize { get; set; } = 600;
+        public int Iterations { get; private set; } = 0;
+        public int SimulationFieldSize { get; } = 600;
         public double CellSize { get; set; }
         public int PreysCount { get; set; }
         public int PredatorsCount { get; set; }
@@ -19,6 +19,13 @@ namespace LifeGame
         public EntityTemplate PreySettings { get; set; }
 
         private Entity[][] entities;
+
+        public Entity[][] Entities
+        {
+            get { return entities; }
+            private set { entities = value; }
+        }
+
         private Image simulationField;
 
         public Simulation(Image simulationField)
@@ -28,26 +35,26 @@ namespace LifeGame
 
         public void PlaceEntities()
         {
-            entities = new Entity[(int)(SimulationFieldSize / CellSize)][];
+            Entities = new Entity[(int)(SimulationFieldSize / CellSize)][];
             Iterations = 0;
 
             int predators = PredatorsCount;
             int preys = PreysCount;
 
-            for (int i = 0; i < entities.Length; i++)
+            for (int i = 0; i < Entities.Length; i++)
             {
-                entities[i] = new Entity[entities.Length];
+                Entities[i] = new Entity[Entities.Length];
 
-                for (int j = 0; j < entities[i].Length; j++)
+                for (int j = 0; j < Entities[i].Length; j++)
                 {
                     if (predators != 0)
                     {
-                        entities[i][j] = new Predator(PredatorSettings);
+                        Entities[i][j] = new Predator(PredatorSettings);
                         predators--;
                     }
                     else if (preys != 0)
                     {
-                        entities[i][j] = new Prey(PreySettings);
+                        Entities[i][j] = new Prey(PreySettings);
                         preys--;
                     }
                 }
@@ -55,15 +62,40 @@ namespace LifeGame
 
             Random random = new Random();
 
-            for (int i = entities.Length - 1; i >= 0; i--)
+            for (int i = Entities.Length - 1; i >= 0; i--)
             {
-                for (int j = entities[i].Length - 1; j >= 0; j--)
+                for (int j = Entities[i].Length - 1; j >= 0; j--)
                 {
                     (int x, int y) = (random.Next(i + 1), random.Next(j + 1));
 
-                    Entity temp = entities[x][y];
-                    entities[x][y] = entities[j][i];
-                    entities[j][i] = temp;
+                    Entity temp = Entities[x][y];
+                    Entities[x][y] = Entities[j][i];
+                    Entities[j][i] = temp;
+                }
+            }
+
+            DrawSimulation();
+        }
+
+        public void PlaceEntities(Entity[][] entitiesArray)
+        {
+            Iterations = 0;
+            Entities = new Entity[entitiesArray.Length][];
+
+            for (int i = 0; i < entitiesArray.Length; i++)
+            {
+                Entities[i] = new Entity[entitiesArray.Length];
+
+                for (int j = 0; j < entitiesArray[i].Length; j++)
+                {
+                    if (entitiesArray[i][j] is Predator)
+                    {
+                        Entities[i][j] = new Predator(PredatorSettings);
+                    }
+                    else if (entitiesArray[i][j] is Prey)
+                    {
+                        Entities[i][j] = new Prey(PreySettings);
+                    }
                 }
             }
 
@@ -76,54 +108,54 @@ namespace LifeGame
 
             (int predator, int prey) entitiesCount = (0, 0);
 
-            for (int x = 0; x < entities.Length; x++)
+            for (int x = 0; x < Entities.Length; x++)
             {
-                for (int y = 0; y < entities[x].Length; y++)
+                for (int y = 0; y < Entities[x].Length; y++)
                 {
-                    entities[x][y]?.Consume(ref entities, x, y);
+                    Entities[x][y]?.Consume(ref entities, x, y);
 
-                    if (Iterations % entities[x][y]?.BreedingIterations == 0)
+                    if (Iterations % Entities[x][y]?.BreedingIterations == 0)
                     {
-                        entities[x][y]?.Breed(ref entities, x, y);
+                        Entities[x][y]?.Breed(ref entities, x, y);
                     }
 
-                    if (Iterations % entities[x][y]?.MovingIterations == 0)
+                    if (Iterations % Entities[x][y]?.MovingIterations == 0)
                     {
-                        entities[x][y]?.Move(ref entities, x, y);
+                        Entities[x][y]?.Move(ref entities, x, y);
                     }
                 }
             }
 
-            for (int x = 0; x < entities.Length; x++)
+            for (int x = 0; x < Entities.Length; x++)
             {
-                for (int y = 0; y < entities[x].Length; y++)
+                for (int y = 0; y < Entities[x].Length; y++)
                 {
-                    if (entities[x][y] is not null)
+                    if (Entities[x][y] is not null)
                     {
-                        entities[x][y].IsBorn = false;
-                        entities[x][y].IsGaveBirth = false;
-                        entities[x][y].IsMoved = false;
-                        entities[x][y].IsEaten = false;
+                        Entities[x][y].IsBorn = false;
+                        Entities[x][y].IsGaveBirth = false;
+                        Entities[x][y].IsMoved = false;
+                        Entities[x][y].IsEaten = false;
 
-                        entities[x][y].DeathCheck(ref entities, x, y);
+                        Entities[x][y].DeathCheck(ref entities, x, y);
 
                         //if (iterations % currentEntity.MovingIterations == 0)
                         //{
                         //    if (--currentEntity.LifeTime <= 0)
                         //    {
-                        //        entities[x][y] = null;
+                        //        Entities[x][y] = null;
                         //    }
                         //}
                     }
                 }
             }
 
-            for (int x = 0; x < entities.Length; x++)
+            for (int x = 0; x < Entities.Length; x++)
             {
-                for (int y = 0; y < entities[x].Length; y++)
+                for (int y = 0; y < Entities[x].Length; y++)
                 {
-                    if (entities[x][y] is Predator) entitiesCount.predator++;
-                    if (entities[x][y] is Prey) entitiesCount.prey++;
+                    if (Entities[x][y] is Predator) entitiesCount.predator++;
+                    if (Entities[x][y] is Prey) entitiesCount.prey++;
                 }
             }
 
@@ -139,14 +171,14 @@ namespace LifeGame
 
             using (DrawingContext drawingContext = drawingVisual.RenderOpen())
             {
-                double padding = (SimulationFieldSize - entities.Length * CellSize) / 2;
+                double padding = (SimulationFieldSize - Entities.Length * CellSize) / 2;
                 drawingContext.DrawRectangle(Brushes.White, null, new Rect(padding, padding, SimulationFieldSize - padding * 2.5, SimulationFieldSize - padding * 2.5));
 
-                for (int x = 0; x < entities.Length; x++)
+                for (int x = 0; x < Entities.Length; x++)
                 {
-                    for (int y = 0; y < entities[x].Length; y++)
+                    for (int y = 0; y < Entities[x].Length; y++)
                     {
-                        drawingContext.DrawRectangle(entities[x][y]?.Color, null, new Rect(x * CellSize + padding + 0.1, y * CellSize + padding + 0.1, CellSize - 0.2, CellSize - 0.2));
+                        drawingContext.DrawRectangle(Entities[x][y]?.Color, null, new Rect(x * CellSize + padding + 0.1, y * CellSize + padding + 0.1, CellSize - 0.2, CellSize - 0.2));
                     }
                 }
             }
@@ -154,8 +186,8 @@ namespace LifeGame
             var bmp = new RenderTargetBitmap(SimulationFieldSize, SimulationFieldSize, 0, 0, PixelFormats.Pbgra32);
             bmp.Render(drawingVisual);
 
-            simulationField.Width = entities.Length * CellSize;
-            simulationField.Height = entities.Length * CellSize;
+            simulationField.Width = Entities.Length * CellSize;
+            simulationField.Height = Entities.Length * CellSize;
             simulationField.Source = bmp;
         }
     }

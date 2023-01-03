@@ -7,6 +7,6 @@
         xmlns:chart="clr-namespace:LifeGame.Charting"
         mc:Ignorable="d"
         Title="График" Width="900" Height="500" ResizeMode="NoResize"
-        Icon="/Resources/heart_icon.png" WindowStartupLocation="CenterScreen">
+        Icon="/Resources/HeartIcon.png" WindowStartupLocation="CenterScreen">
     <chart:ChartingElement Width="840" Height="440" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" x:Name="ChartingElement" />
 </Window>
