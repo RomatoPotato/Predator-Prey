@@ -17,12 +17,5 @@ namespace LifeGame
                 {
                     new KeyGesture(Key.E, ModifierKeys.Control)
                 });
-
-        public static readonly RoutedUICommand ReturnDefault =
-            new RoutedUICommand("", "ReturnDefault", typeof(Commands),
-                new InputGestureCollection()
-                {
-                    new KeyGesture(Key.R, ModifierKeys.Control)
-                });
     }
 }

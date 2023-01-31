@@ -15,13 +15,10 @@
         <CommandBinding Command="ApplicationCommands.Save" Executed="CommandBindingSaveFile_Executed" />
         <CommandBinding Command="ApplicationCommands.Close" Executed="CommandBindingClose_Executed" />
         <CommandBinding Command="local:Commands.ExportToExcel" Executed="CommandBindingExportToExcel_Executed" CanExecute="CommandBindingOpenChart_CanExecute" />
-        <CommandBinding Command="local:Commands.ReturnDefault" Executed="CommandBindingReturnDefault_Executed" CanExecute="CommandBindingReturnDefault_CanExecute" />
     </Window.CommandBindings>
     <DockPanel LastChildFill="True" Name="MainPanel">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_Файл">
-                <MenuItem Header="Вернуть значения по _умолчанию" Command="local:Commands.ReturnDefault" />
-                <Separator/>
                 <MenuItem Header="_Загрузить шаблон" Command="ApplicationCommands.Open"/>
                 <MenuItem Header="_Сохранить шаблон" Command="ApplicationCommands.Save"/>
                 <Separator/>
