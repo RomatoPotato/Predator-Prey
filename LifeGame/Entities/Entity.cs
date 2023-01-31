@@ -5,13 +5,14 @@ using System.Windows.Media;
 
 namespace LifeGame.Entities
 {
-    internal abstract class Entity
+    public abstract class Entity
     {
         public abstract SolidColorBrush Color { get; set; }
 
         public int LifeTime { get; set; }
         public int BreedingIterations { get; set; }
-        public int AmountOfEnergy { get; set; }
+        public double AmountOfEnergy { get; set; }
+        public double AmountOfConsumingEnergy { get; set; }
         public int MovingIterations { get; set; }
         public int CriticalAmountOfNeighbors { get; set; }
         public bool BreedWith2Parents { get; set; }
@@ -40,6 +41,7 @@ namespace LifeGame.Entities
             BreedingIterations = settingsRandom.Next(settings.BreedingIterations.Min, settings.BreedingIterations.Max);
             LifeTime = settingsRandom.Next(settings.LifeTime.Min, settings.LifeTime.Max);
             AmountOfEnergy = settingsRandom.Next(settings.AmountOfEnergy.Min, settings.AmountOfEnergy.Max);
+            AmountOfConsumingEnergy = settings.AmountOfConsumingEnergy;
         }
 
         public Entity()

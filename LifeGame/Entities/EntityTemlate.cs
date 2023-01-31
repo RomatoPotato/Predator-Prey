@@ -2,7 +2,7 @@
 
 namespace LifeGame.Entities
 {
-    internal class EntityTemplate
+    public class EntityTemplate
     {
         public SolidColorBrush Color { get; set; } = Brushes.Black;
 
@@ -12,5 +12,6 @@ namespace LifeGame.Entities
         public int MovingIterations { get; set; }
         public int CriticalAmountOfNeighbors { get; set; }
         public bool BreedWith2Parents { get; set; }
+        public double AmountOfConsumingEnergy { get; set; }
     }
 }

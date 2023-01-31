@@ -10,56 +10,85 @@ namespace LifeGame.Additional
     {
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             "Value",
-            typeof(int),
+            typeof(double),
             typeof(NumericBox),
-            new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-        public int Value
+        public static readonly DependencyProperty MinValueProperty = DependencyProperty.Register(
+            "MinValue",
+            typeof(int),
+            typeof(NumericBox));
+        
+        public static readonly DependencyProperty MaxValueProperty = DependencyProperty.Register(
+            "MaxValue",
+            typeof(int),
+            typeof(NumericBox));
+
+        public static readonly DependencyProperty StepProperty = DependencyProperty.Register(
+            "Step",
+            typeof(double),
+            typeof(NumericBox));
+
+        public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
+            "ValueChanged",
+            RoutingStrategy.Bubble,
+            typeof(EventHandler),
+            typeof(NumericBox));
+
+        public double Value
         {
-            get => (int)GetValue(ValueProperty);
-            set => SetValue(ValueProperty, Math.Clamp(value, MinValue, MaxValue));
+            get => (double)GetValue(ValueProperty);
+            set
+            {
+                SetValue(ValueProperty, Math.Round(Math.Clamp(value, MinValue, MaxValue), 1));
+
+                RoutedEventArgs routedEventArgs = new RoutedEventArgs(ValueChangedEvent);
+                RaiseEvent(routedEventArgs);
+            }
         }
 
-        public int MinValue { get; set; }
-        public int MaxValue { get; set; }
+        public int MinValue {
+            get => (int)GetValue(MinValueProperty);
+            set => SetValue(MinValueProperty, value);
+        }
 
-        private Regex onlyNumbersRegex = new Regex(@"\D");
+        public int MaxValue
+        {
+            get => (int)GetValue(MaxValueProperty);
+            set => SetValue(MaxValueProperty, value);
+        }
+
+        public double Step
+        {
+            get => (double)GetValue(StepProperty);
+            set => SetValue(StepProperty, value);
+        }
+
+        public event EventHandler ValueChanged
+        {
+            add { AddHandler(ValueChangedEvent, value); }
+            remove { RemoveHandler(ValueChangedEvent, value); }
+        }
 
         public NumericBox()
         {
             InitializeComponent();
-
-            DataObject.AddPastingHandler(NumericTextBox, NumericBoxPaste);
-        }
-
-        private void NumericBoxPaste(object sender, DataObjectPastingEventArgs e)
-        {
-            string clipboard = e.DataObject.GetData(typeof(string)) as string ?? "";
-            DataObject dataObject = new DataObject();
-
-            dataObject.SetData(DataFormats.Text, onlyNumbersRegex.Replace(clipboard, string.Empty));
-            e.DataObject = dataObject;
-        }
-
-        private void NumericTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = onlyNumbersRegex.IsMatch(e.Text);
         }
 
         private void Numeric_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (e.Delta > 0) Value++;
-            else Value--;
+            if (e.Delta > 0) Value += Step;
+            else Value -= Step;
         }
 
         private void NumericButtonUp_Click(object sender, RoutedEventArgs e)
         {
-            Value++;
+            Value += Step;
         }
 
         private void NumericButtonDown_Click(object sender, RoutedEventArgs e)
         {
-            Value--;
+            Value -= Step;
         }
     }
 }

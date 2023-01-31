@@ -12,15 +12,18 @@
         <Style TargetType="{x:Type addit:NumericBox}">
             <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="Width" Value="50" />
+            <Setter Property="MinValue" Value="1" />
+            <Setter Property="MaxValue" Value="99" />
+            <Setter Property="Step" Value="1" />
+            <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
+        </Style>
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
         </Style>
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="Width" Value="40" />
-            <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
-        </Style>
-        <Style TargetType="{x:Type CheckBox}">
-            <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
         </Style>
         <Style TargetType="{x:Type Slider}">
@@ -36,9 +39,11 @@
             <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
         </Style>
         <Image x:Key="PlayButton" Source="/Resources/PlayButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
+        <Image x:Key="PlayButtonDisabled" Source="/Resources/PlayButton_disabled.png" RenderOptions.BitmapScalingMode="HighQuality" />
         <Image x:Key="StopButton" Source="/Resources/StopButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
         <Image x:Key="PauseButton" Source="/Resources/PauseButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
         <Image x:Key="ResetButton" Source="/Resources/ResetButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
+        <Image x:Key="ResetButtonDisabled" Source="/Resources/ResetButton_disabled.png" RenderOptions.BitmapScalingMode="HighQuality" />
         <Image x:Key="NextStepButton" Source="/Resources/NextStepButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
         <Image x:Key="NextStepButtonDisabled" Source="/Resources/NextStepButton_disabled.png"  RenderOptions.BitmapScalingMode="HighQuality" />
         <Image x:Key="EditButton" Source="/Resources/EditButton.png" RenderOptions.BitmapScalingMode="HighQuality" />

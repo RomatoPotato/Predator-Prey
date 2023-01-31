@@ -15,10 +15,24 @@ namespace LifeGame.Charting
 
         private ChartingElement chartingElement;
 
+        public bool isChartsEmpty
+        {
+            get
+            {
+                foreach (var chart in charts)
+                {
+                    if (chart.Value.Count == 0) return true;
+                }
+
+                return false;
+            }
+        }
+
         public Chart(ChartingElement chartingElement)
         {
             this.chartingElement = chartingElement;
         }
+
         private void CheckExistenceOfChart(string chartName)
         {
             if (!charts.ContainsKey(chartName))

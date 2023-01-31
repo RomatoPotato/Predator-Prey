@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
+using System.Xml.Serialization;
 
 namespace LifeGame.Entities
 {
-    internal class Prey : Entity
+    public class Prey : Entity
     {
         public Prey(EntityTemplate settings) : base(settings)
         {

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
+using System.Xml.Serialization;
 
 namespace LifeGame.Entities
 {
-    internal class Predator : Entity
+    public class Predator : Entity
     {
         public Predator(EntityTemplate settings) : base(settings)
         {
@@ -43,11 +44,10 @@ namespace LifeGame.Entities
 
                 if (!choosedPrey.IsBorn && !choosedPrey.IsMoved)
                 {
-                    AmountOfEnergy += 2;
+                    AmountOfEnergy += AmountOfConsumingEnergy;
                     IsEaten = true;
 
                     entities[oppositeCells.ToArray()[consumePreyIndex].x][oppositeCells.ToArray()[consumePreyIndex].y] = null;
-                    //entities[x][y] = null;
                 }
             }
         }
@@ -88,7 +88,7 @@ namespace LifeGame.Entities
             }
             else
             {
-                if (clearCells.Count >= 1 && !IsActed() && AmountOfEnergy > 3)
+                if (clearCells.Count >= 1 && !(IsBorn || IsGaveBirth || IsMoved) && AmountOfEnergy > 3)
                 {
                     Random r = new Random();
                     int clearCellIndex = r.Next(clearCells.Count);

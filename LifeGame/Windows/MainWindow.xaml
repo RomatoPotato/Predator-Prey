@@ -6,25 +6,46 @@
         xmlns:local="clr-namespace:LifeGame"
         xmlns:chart="clr-namespace:LifeGame.Charting"
         xmlns:add="clr-namespace:LifeGame.Additional"
-        mc:Ignorable="d" ResizeMode="NoResize"
+        mc:Ignorable="d" ResizeMode="CanMinimize"
         Title="Моделирование биологической системы хищник-жертва" Width="1070"
         WindowStartupLocation="CenterScreen" SizeToContent="Height" Icon="/Windows/HeartIcon.png">
     <Window.CommandBindings>
-        <CommandBinding Command="local:Commands.OpenChart" Executed="CommandBindingOpenChart_Executed" />
+        <CommandBinding Command="local:Commands.OpenChart" Executed="CommandBindingOpenChart_Executed" CanExecute="CommandBindingOpenChart_CanExecute" />
         <CommandBinding Command="ApplicationCommands.Open" Executed="CommandBindingOpenFile_Executed" />
         <CommandBinding Command="ApplicationCommands.Save" Executed="CommandBindingSaveFile_Executed" />
+        <CommandBinding Command="ApplicationCommands.Close" Executed="CommandBindingClose_Executed" />
+        <CommandBinding Command="local:Commands.ExportToExcel" Executed="CommandBindingExportToExcel_Executed" CanExecute="CommandBindingOpenChart_CanExecute" />
     </Window.CommandBindings>
     <DockPanel LastChildFill="True" Name="MainPanel">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_Файл">
-                <MenuItem Header="Открыть _симуляцию" Command="ApplicationCommands.Open"/>
+                <MenuItem Header="_Загрузить шаблон" Command="ApplicationCommands.Open"/>
+                <MenuItem Header="_Сохранить шаблон" Command="ApplicationCommands.Save"/>
+                <Separator/>
+                <MenuItem Header="_Выход" Command="ApplicationCommands.Close"/>
             </MenuItem>
             <MenuItem Header="_График">
                 <MenuItem Header="_Открыть в отдельном окне" Command="local:Commands.OpenChart" />
+                <MenuItem Header="_Экспорт">
+                    <MenuItem Header="В _Excel" Command="local:Commands.ExportToExcel" />
+                </MenuItem>
             </MenuItem>
         </Menu>
-        <ToolBar Height="30" DockPanel.Dock="Top">
-            <Button Name="ResetButton" Content="{StaticResource ResetButton}" Click="ResetButton_Click" IsEnabled="{Binding Path=HasNoErrors, UpdateSourceTrigger=PropertyChanged}" ToolTip="Случайная расстановка существ в симуляции" />
+        <ToolBar Height="30" DockPanel.Dock="Top" IsEnabled="{Binding Path=HasNoErrors, UpdateSourceTrigger=PropertyChanged}">
+            <Button Name="ResetButton" Click="ResetButton_Click" ToolTip="Случайная расстановка существ в симуляции">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="True">
+                                <Setter Property="Content" Value="{StaticResource ResetButton}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Content" Value="{StaticResource ResetButtonDisabled}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
             <Button Name="StopButton" Visibility="Collapsed" Content="{StaticResource StopButton}" Click="StopButton_Click" ToolTip="Остановка симуляции и возвращение расстановки существ к первоначальному состоянию" />
             <Button Name="NextStepButton" Click="NextStepButton_Click" ToolTip="Следующий шаг">
                 <Button.Style>
@@ -40,7 +61,20 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Name="PlayButton" Content="{StaticResource PlayButton}" Click="PlayButton_Click" ToolTip="Запуск симуляции" />
+            <Button Name="PlayButton" Click="PlayButton_Click" ToolTip="Запуск симуляции">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="True">
+                                <Setter Property="Content" Value="{StaticResource PlayButton}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Content" Value="{StaticResource PlayButtonDisabled}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
             <Separator/>
             <Button Name="RandomButton" ToolTip="Случайная расстановка существ и их настроек в симуляции" Click="RandomButton_Click">
                 <Button.Style>
@@ -58,11 +92,10 @@
             </Button>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
                 <TextBlock Text="Скорость симуляции:" ToolTip="Скорость симуляции в миллисекундах" />
-                <Slider Name="SimulationSpeedSlider" Minimum="10" Maximum="1000" Value="100" Width="100" IsSnapToTickEnabled="True" TickFrequency="10" ValueChanged="SimulationSpeedSlider_ValueChanged" />
+                <Slider Name="SimulationSpeedSlider" Minimum="10" Maximum="1000" Value="60" Width="100" IsSnapToTickEnabled="True" TickFrequency="10" ValueChanged="SimulationSpeedSlider_ValueChanged" />
                 <TextBox Text="{Binding ElementName=SimulationSpeedSlider, Path=Value}" PreviewTextInput="NumbersTextBox_PreviewTextInput" IsEnabled="False" />
+                <TextBlock Text="мс" Margin="5,0,5,0" ToolTip="Миллисекунд" />
             </StackPanel>
-            <Separator/>
-            <Button Name="EditButton" Content="{StaticResource EditButton}" ToolTip="Редактировать" />
             <Separator/>
         </ToolBar>
         <StatusBar Height="30" DockPanel.Dock="Bottom">
@@ -132,6 +165,7 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="Хищники" HorizontalAlignment="Center" />
                         <TextBlock Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="3" Text="Жертвы" HorizontalAlignment="Center" />
@@ -145,26 +179,28 @@
                         <CheckBox IsChecked="{Binding Path=BreedingWith2ParentsPredator, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" Name="BreedWith2ParentsCheckBox_Predator" />
                         <CheckBox IsChecked="{Binding Path=BreedingWith2ParentsPrey, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="4" HorizontalAlignment="Center" Name="BreedWith2ParentsCheckBox_Prey" />
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="Кол-во итераций для перемещения" ToolTip="Перемещение происходит каждую установленную итерацию" />
-                        <add:NumericBox x:Name="MovingIterationsPredator_NumericBox" Grid.Row="4" Grid.Column="1" Value="{Binding Path=MovingIterationsPredator, UpdateSourceTrigger=PropertyChanged}" MinValue="1" MaxValue="99" />
-                        <add:NumericBox x:Name="MovingIterationsPrey_NumericBox" Grid.Row="4" Grid.Column="4" Value="{Binding Path=MovingIterationsPrey, UpdateSourceTrigger=PropertyChanged}" MinValue="1" MaxValue="99" />
+                        <add:NumericBox x:Name="MovingIterationsPredator_NumericBox" Grid.Row="4" Grid.Column="1" Value="{Binding Path=MovingIterationsPredator, UpdateSourceTrigger=PropertyChanged}" />
+                        <add:NumericBox x:Name="MovingIterationsPrey_NumericBox" Grid.Row="4" Grid.Column="4" Value="{Binding Path=MovingIterationsPrey, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Grid.Row="5" Grid.Column="0" Text="Кол-во итераций для размножения" ToolTip="Размножение происходит каждую установленную итерацию" />
-                        <add:NumericBox x:Name="BreedingIterationsPredatorMin_NumericBox" Grid.Row="5" Grid.Column="1" Value="{Binding Path=BreedingIterationsPredatorMin, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="99" />
+                        <add:NumericBox x:Name="BreedingIterationsPredatorMin_NumericBox" Grid.Row="5" Grid.Column="1" Value="{Binding Path=BreedingIterationsPredatorMin, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Grid.Row="5" Grid.Column="2" Text="-" HorizontalAlignment="Center" />
-                        <add:NumericBox x:Name="BreedingIterationsPredatorMax_NumericBox" Grid.Row="5" Grid.Column="3" Value="{Binding Path=BreedingIterationsPredatorMax, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="99" />
-                        <add:NumericBox x:Name="BreedingIterationsPreyMin_NumericBox" Grid.Row="5" Grid.Column="4" Value="{Binding Path=BreedingIterationsPreyMin, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="99" />
+                        <add:NumericBox x:Name="BreedingIterationsPredatorMax_NumericBox" Grid.Row="5" Grid.Column="3" Value="{Binding Path=BreedingIterationsPredatorMax, UpdateSourceTrigger=PropertyChanged}" />
+                        <add:NumericBox x:Name="BreedingIterationsPreyMin_NumericBox" Grid.Row="5" Grid.Column="4" Value="{Binding Path=BreedingIterationsPreyMin, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
                         <TextBlock Grid.Row="5" Grid.Column="5" Text="-" HorizontalAlignment="Center" />
-                        <add:NumericBox x:Name="BreedingIterationsPreyMax_NumericBox" Grid.Row="5" Grid.Column="6" Value="{Binding Path=BreedingIterationsPreyMax, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="99" />
+                        <add:NumericBox x:Name="BreedingIterationsPreyMax_NumericBox" Grid.Row="5" Grid.Column="6" Value="{Binding Path=BreedingIterationsPreyMax, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="Время жизни" ToolTip="Количество итераций, которое существо живёт" />
-                        <add:NumericBox x:Name="LifeTimePredatorMin_NumericBox" Grid.Row="6" Grid.Column="1" Value="{Binding Path=LifeTimePredatorMin, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="99" />
+                        <add:NumericBox x:Name="LifeTimePredatorMin_NumericBox" Grid.Row="6" Grid.Column="1" Value="{Binding Path=LifeTimePredatorMin, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Grid.Row="6" Grid.Column="2" Text="-" HorizontalAlignment="Center" />
-                        <add:NumericBox x:Name="LifeTimePredatorMax_NumericBox" Grid.Row="6" Grid.Column="3" Value="{Binding Path=LifeTimePredatorMax, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="99" />
-                        <add:NumericBox x:Name="LifeTimePreyMin_NumericBox" Grid.Row="6" Grid.Column="4" Value="{Binding Path=LifeTimePreyMin, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="99" />
+                        <add:NumericBox x:Name="LifeTimePredatorMax_NumericBox" Grid.Row="6" Grid.Column="3" Value="{Binding Path=LifeTimePredatorMax, UpdateSourceTrigger=PropertyChanged}" />
+                        <add:NumericBox x:Name="LifeTimePreyMin_NumericBox" Grid.Row="6" Grid.Column="4" Value="{Binding Path=LifeTimePreyMin, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Grid.Row="6" Grid.Column="5" Text="-" HorizontalAlignment="Center" />
-                        <add:NumericBox x:Name="LifeTimePreyMax_NumericBox" Grid.Row="6" Grid.Column="6" Value="{Binding Path=LifeTimePreyMax, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="99" />
+                        <add:NumericBox x:Name="LifeTimePreyMax_NumericBox" Grid.Row="6" Grid.Column="6" Value="{Binding Path=LifeTimePreyMax, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Grid.Row="7" Grid.Column="0" Text="Количество энергии" ToolTip="Количество начальной энергии хищников" />
-                        <add:NumericBox x:Name="AmountOfEnergyPredatorMin_NumericBox" Grid.Row="7" Grid.Column="1" Value="{Binding Path=AmountOfEnergyPredatorMin, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="99" />
+                        <add:NumericBox x:Name="AmountOfEnergyPredatorMin_NumericBox" Grid.Row="7" Grid.Column="1" Value="{Binding Path=AmountOfEnergyPredatorMin, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Grid.Row="7" Grid.Column="2" Text="-" HorizontalAlignment="Center" />
-                        <add:NumericBox x:Name="AmountOfEnergyPredatorMax_NumericBox" Grid.Row="7" Grid.Column="3" Value="{Binding Path=AmountOfEnergyPredatorMax, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" MinValue="1" MaxValue="99" />
+                        <add:NumericBox x:Name="AmountOfEnergyPredatorMax_NumericBox" Grid.Row="7" Grid.Column="3" Value="{Binding Path=AmountOfEnergyPredatorMax, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Кол-во получаемой энергии от пищи" ToolTip="Количество энергии, получаемой при поедании жертв" />
+                        <add:NumericBox Grid.Row="8" Grid.Column="1" Value="{Binding Path=AmountOfConsumingEnergy, UpdateSourceTrigger=PropertyChanged}" MinValue="0" MaxValue="20" Step="0.1" />
                     </Grid>
                     <WrapPanel DockPanel.Dock="Top" Height="200" VerticalAlignment="Bottom" Background="White">
                         <chart:ChartingElement Height="190" Width="430" x:Name="ChartingElement" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" />

@@ -1,17 +1,21 @@
-﻿using LifeGame.AppData;
+﻿using LifeGame.PresetSettings;
 using LifeGame.Charting;
 using LifeGame.Entities;
 using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Xml.Serialization;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Windows.Controls;
 
 namespace LifeGame.Windows
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : System.Windows.Window
     {
         private Simulation sim;
         private Chart chart;
@@ -27,7 +31,7 @@ namespace LifeGame.Windows
 
             entitiesPreset = new EntitiesPreset()
             {
-                AreaWidth = 64,
+                AreaWidth = 100,
                 PredatorsCount = 50,
                 PreysCount = 4000,
                 CriticalAmountOfNeighborsPredator = 8,
@@ -48,6 +52,7 @@ namespace LifeGame.Windows
                 LifeTimePreyMax = 20,
                 AmountOfEnergyPredatorMin = 8,
                 AmountOfEnergyPredatorMax = 10,
+                AmountOfConsumingEnergy = 2,
                 HasNoErrors = true
             };
 
@@ -78,7 +83,8 @@ namespace LifeGame.Windows
                 MovingIterations = entitiesPreset.MovingIterationsPredator,
                 BreedingIterations = (entitiesPreset.BreedingIterationsPredatorMin, entitiesPreset.BreedingIterationsPredatorMax),
                 LifeTime = (entitiesPreset.LifeTimePredatorMin, entitiesPreset.LifeTimePredatorMax),
-                AmountOfEnergy = (entitiesPreset.AmountOfEnergyPredatorMin, entitiesPreset.AmountOfEnergyPredatorMax)
+                AmountOfEnergy = (entitiesPreset.AmountOfEnergyPredatorMin, entitiesPreset.AmountOfEnergyPredatorMax),
+                AmountOfConsumingEnergy = entitiesPreset.AmountOfConsumingEnergy
             };
 
             EntityTemplate preySettings = new EntityTemplate
@@ -259,26 +265,151 @@ namespace LifeGame.Windows
         private void CommandBindingOpenFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Файлы симуляции (*.sim)|*.sim";
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            openFileDialog.Filter = "Файл предустановки симуляции (*.sim)|*.sim| XML-файл (*.xml)|*.xml";
+            openFileDialog.InitialDirectory = Environment.CurrentDirectory;
             
             var result = openFileDialog.ShowDialog();
 
             if (result.HasValue && result.Value)
             {
                 string fileName = openFileDialog.FileName;
+
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(EntitiesPreset));
+
+                using (Stream fStream = new FileStream(fileName, FileMode.Open))
+                {
+                    EntitiesPreset preset;
+
+                    try
+                    {
+                        preset = (EntitiesPreset)xmlSerializer.Deserialize(fStream);
+
+                        MessageBoxResult messageBoxResult = MessageBox.Show("Загрузить симуляцию?", "Внимание!", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+
+                        if (messageBoxResult == MessageBoxResult.Yes)
+                        {
+                            if (preset != null)
+                            {
+                                entitiesPreset.AreaWidth = preset.AreaWidth;
+                                entitiesPreset.PredatorsCount = preset.PredatorsCount;
+                                entitiesPreset.PreysCount = preset.PreysCount;
+                                entitiesPreset.DeathByOverpopulationPredator = preset.DeathByOverpopulationPredator;
+                                entitiesPreset.DeathByOverpopulationPrey = preset.DeathByOverpopulationPrey;
+                                entitiesPreset.CriticalAmountOfNeighborsPredator = preset.CriticalAmountOfNeighborsPredator;
+                                entitiesPreset.CriticalAmountOfNeighborsPrey = preset.CriticalAmountOfNeighborsPrey;
+                                entitiesPreset.BreedingWith2ParentsPrey = preset.BreedingWith2ParentsPrey;
+                                entitiesPreset.BreedingWith2ParentsPredator = preset.BreedingWith2ParentsPredator;
+                                entitiesPreset.MovingIterationsPredator = preset.MovingIterationsPredator;
+                                entitiesPreset.MovingIterationsPrey = preset.MovingIterationsPrey;
+                                entitiesPreset.BreedingIterationsPredatorMin = preset.BreedingIterationsPredatorMin;
+                                entitiesPreset.BreedingIterationsPredatorMax = preset.BreedingIterationsPredatorMax;
+                                entitiesPreset.BreedingIterationsPreyMin = preset.BreedingIterationsPreyMin;
+                                entitiesPreset.BreedingIterationsPreyMax = preset.BreedingIterationsPreyMax;
+                                entitiesPreset.LifeTimePredatorMin = preset.LifeTimePredatorMin;
+                                entitiesPreset.LifeTimePredatorMax = preset.LifeTimePredatorMax;
+                                entitiesPreset.LifeTimePreyMin = preset.LifeTimePreyMin;
+                                entitiesPreset.LifeTimePreyMax = preset.LifeTimePreyMax;
+                                entitiesPreset.AmountOfEnergyPredatorMax = preset.AmountOfEnergyPredatorMax;
+                                entitiesPreset.AmountOfEnergyPredatorMin = preset.AmountOfEnergyPredatorMin;
+
+                                SetSimulationData();
+                                chart.ClearAllCharts();
+                                CoordsManager.CreateInfoFile();
+                            }
+                            else
+                            {
+                                throw new InvalidOperationException("БЛЯТЬ");
+                            }
+                        }
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        MessageBox.Show("Ошибка загрузки симуляции!", "Ошибка!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
             }
         }
 
         private void CommandBindingSaveFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            //SaveFileDialog saveFileDialog = new SaveFileDialog();
-            //saveFileDialog.Filter = "Файлы симуляции (*.sim)|*.sim";
-            //saveFileDialog.InitialDirectory = Environment.CurrentDirectory;
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Файл предустановки симуляции (*.sim)|*.sim| XML-файл (*.xml)|*.xml";
+            saveFileDialog.InitialDirectory = Environment.CurrentDirectory;
 
-            //saveFileDialog.ShowDialog();
+            var result = saveFileDialog.ShowDialog();
 
+            if (result.HasValue && result.Value)
+            {
+                string fileName = saveFileDialog.FileName;
 
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(EntitiesPreset));
+
+                using (Stream fStream = new FileStream(fileName, FileMode.Create))
+                {
+                    xmlSerializer.Serialize(fStream, entitiesPreset);
+                }
+            }
+        }
+
+        private void CommandBindingOpenChart_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !chart.isChartsEmpty && !isPlayed;
+        }
+
+        private void CommandBindingExportToExcel_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var excelApp = new Excel.Application();
+            excelApp.Visible = true;
+            excelApp.Workbooks.Add();
+
+            Excel._Worksheet worksheet = (Excel._Worksheet)excelApp.ActiveSheet;
+            worksheet.Cells[1, "A"] = "Итерация";
+            worksheet.Cells[1, "B"] = "Количество хищников";
+            worksheet.Cells[1, "C"] = "Количество жертв";
+
+            var entitiesInfo = CoordsManager.ReadInfoFromFile();
+
+            for (int i = 1; i < entitiesInfo.numberAndPrey.Count; i++)
+            {
+                worksheet.Cells[i + 1, "A"] = i;
+                worksheet.Cells[i + 1, "B"] = entitiesInfo.numberAndPredator[i];
+                worksheet.Cells[i + 1, "C"] = entitiesInfo.numberAndPrey[i];
+            }
+
+            worksheet.Columns.AutoFit();
+
+            var charts = worksheet.ChartObjects() as Excel.ChartObjects;
+            var chartObject = charts.Add(280, 20, 500, 250);
+            var excelChart = chartObject.Chart;
+            var range = worksheet.get_Range("A1", "C" + entitiesInfo.numberAndPrey.Count.ToString());
+            excelChart.SetSourceData(range);
+            excelChart.ChartType = Excel.XlChartType.xlXYScatterSmoothNoMarkers;
+            excelChart.ChartWizard(Source: range, Title: "Изменение численности популяций со временем", CategoryTitle: "Итерация", ValueTitle: "Количество");
+        }
+
+        private void CommandBindingClose_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void NumericBox_ValueChanged(object sender, EventArgs e)
+        {
+            SetSimulationData();
+        }
+
+        private void CheckBox_Clicked(object sender, RoutedEventArgs e)
+        {
+            SetSimulationData();
+        }
+
+        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            SetSimulationData();
+        }
+
+        private void fieldSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (sim is not null) SetSimulationData();
         }
     }
 }

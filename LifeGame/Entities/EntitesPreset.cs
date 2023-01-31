@@ -1,12 +1,15 @@
-﻿using System;
+﻿using LifeGame.Entities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Xml.Serialization;
 
-namespace LifeGame.AppData
+namespace LifeGame.PresetSettings
 {
-    internal partial class EntitiesPreset : IDataErrorInfo, INotifyDataErrorInfo, INotifyPropertyChanged
+    [Serializable]
+    public class EntitiesPreset : IDataErrorInfo, INotifyDataErrorInfo, INotifyPropertyChanged
     {
 		private int areaWidth;
 		private int predatorsCount;
@@ -29,6 +32,7 @@ namespace LifeGame.AppData
         private int lifeTimePreyMax;
         private int amountOfEnergyPredatorMin;
         private int amountOfEnergyPredatorMax;
+        private double amountOfConsumingEnergy;
 
         private readonly Dictionary<string, List<string>> errors = new Dictionary<string, List<string>>();
 
@@ -37,6 +41,7 @@ namespace LifeGame.AppData
 
         private bool hasNoErrors = true;
 
+        [XmlIgnore]
         public bool HasNoErrors
         {
             get { return hasNoErrors; }
@@ -73,7 +78,7 @@ namespace LifeGame.AppData
 
         public int AreaWidth
 		{
-			get { return areaWidth; }
+            get => areaWidth;
 			set
             {
                 areaWidth = value;
@@ -83,7 +88,7 @@ namespace LifeGame.AppData
 
         public int PredatorsCount
         {
-            get { return predatorsCount; }
+            get => predatorsCount;
             set
             { 
                 predatorsCount = value;
@@ -93,7 +98,7 @@ namespace LifeGame.AppData
 
         public int PreysCount
         {
-            get { return preysCount; }
+            get => preysCount;
             set
             {
                 preysCount = value;
@@ -103,7 +108,7 @@ namespace LifeGame.AppData
 
         public bool DeathByOverpopulationPredator
         {
-            get { return deathByOverpopulationPredator; }
+            get => deathByOverpopulationPredator;
             set 
             {
                 deathByOverpopulationPredator = value;
@@ -113,7 +118,7 @@ namespace LifeGame.AppData
 
         public bool DeathByOverpopulationPrey
         {
-            get { return deathByOverpopulationPrey; }
+            get => deathByOverpopulationPrey;
             set
             {
                 deathByOverpopulationPrey = value;
@@ -123,7 +128,7 @@ namespace LifeGame.AppData
 
         public int CriticalAmountOfNeighborsPredator
         {
-            get { return criticalAmountOfNeighborsPredator; }
+            get => criticalAmountOfNeighborsPredator;
             set
             {
                 criticalAmountOfNeighborsPredator = value;
@@ -133,7 +138,7 @@ namespace LifeGame.AppData
         
         public int CriticalAmountOfNeighborsPrey
         {
-            get { return criticalAmountOfNeighborsPrey; }
+            get => criticalAmountOfNeighborsPrey;
             set 
             { 
                 criticalAmountOfNeighborsPrey = value;
@@ -143,7 +148,7 @@ namespace LifeGame.AppData
 
         public bool BreedingWith2ParentsPredator
         {
-            get { return breedingWith2ParentsPredator; }
+            get => breedingWith2ParentsPredator;
             set 
             {
                 breedingWith2ParentsPredator = value;
@@ -153,7 +158,7 @@ namespace LifeGame.AppData
 
         public bool BreedingWith2ParentsPrey
         {
-            get { return breedingWith2ParentsPrey; }
+            get => breedingWith2ParentsPrey;
             set 
             {
                 breedingWith2ParentsPrey = value;
@@ -163,7 +168,7 @@ namespace LifeGame.AppData
 
         public int MovingIterationsPredator
         {
-            get { return movingIterationsPredator; }
+            get => movingIterationsPredator;
             set 
             {
                 movingIterationsPredator = value;
@@ -173,7 +178,7 @@ namespace LifeGame.AppData
         
         public int MovingIterationsPrey
         {
-            get { return movingIterationsPrey; }
+            get => movingIterationsPrey;
             set
             {
                 movingIterationsPrey = value;
@@ -183,7 +188,7 @@ namespace LifeGame.AppData
 
         public int BreedingIterationsPredatorMin
         {
-            get { return breedingIterationsPredatorMin; }
+            get => breedingIterationsPredatorMin;
             set 
             {
                 breedingIterationsPredatorMin = breedingIterationsPredatorMax == 0 ? value : Math.Min(value, Math.Max(1, breedingIterationsPredatorMax));
@@ -193,7 +198,7 @@ namespace LifeGame.AppData
         
         public int BreedingIterationsPredatorMax
         {
-            get { return breedingIterationsPredatorMax; }
+            get => breedingIterationsPredatorMax;
             set
             { 
                 breedingIterationsPredatorMax = Math.Max(breedingIterationsPredatorMin, value);
@@ -203,7 +208,7 @@ namespace LifeGame.AppData
         
         public int BreedingIterationsPreyMin
         {
-            get { return breedingIterationsPreyMin; }
+            get => breedingIterationsPreyMin;
             set
             {
                 breedingIterationsPreyMin = breedingIterationsPreyMax == 0 ? value : Math.Min(value, Math.Max(1, breedingIterationsPreyMax));
@@ -213,7 +218,7 @@ namespace LifeGame.AppData
         
         public int BreedingIterationsPreyMax
         {
-            get { return breedingIterationsPreyMax; }
+            get => breedingIterationsPreyMax;
             set
             {
                 breedingIterationsPreyMax = Math.Max(breedingIterationsPreyMin, value);
@@ -223,7 +228,7 @@ namespace LifeGame.AppData
 
         public int LifeTimePredatorMin
         {
-            get { return lifeTimePredatorMin; }
+            get => lifeTimePredatorMin;
             set
             {
                 lifeTimePredatorMin = lifeTimePredatorMax == 0 ? value : Math.Min(value, Math.Max(1, lifeTimePredatorMax));
@@ -233,7 +238,7 @@ namespace LifeGame.AppData
         
         public int LifeTimePredatorMax
         {
-            get { return lifeTimePredatorMax; }
+            get => lifeTimePredatorMax;
             set
             {
                 lifeTimePredatorMax = Math.Max(lifeTimePredatorMin, value);
@@ -243,7 +248,7 @@ namespace LifeGame.AppData
         
         public int LifeTimePreyMin
         {
-            get { return lifeTimePreyMin; }
+            get => lifeTimePreyMin;
             set
             {
                 lifeTimePreyMin = lifeTimePreyMax == 0 ? value : Math.Min(value, Math.Max(1, lifeTimePreyMax));
@@ -253,7 +258,7 @@ namespace LifeGame.AppData
         
         public int LifeTimePreyMax
         {
-            get { return lifeTimePreyMax; }
+            get => lifeTimePreyMax;
             set
             {
                 lifeTimePreyMax = Math.Max(lifeTimePreyMin, value);
@@ -263,7 +268,7 @@ namespace LifeGame.AppData
         
         public int AmountOfEnergyPredatorMin
         {
-            get { return amountOfEnergyPredatorMin; }
+            get => amountOfEnergyPredatorMin;
             set
             {
                 amountOfEnergyPredatorMin = amountOfEnergyPredatorMax == 0 ? value : Math.Min(value, Math.Max(1, amountOfEnergyPredatorMax));
@@ -273,10 +278,20 @@ namespace LifeGame.AppData
         
         public int AmountOfEnergyPredatorMax
         {
-            get { return amountOfEnergyPredatorMax; }
+            get => amountOfEnergyPredatorMax;
             set
             {
                 amountOfEnergyPredatorMax = Math.Max(amountOfEnergyPredatorMin, value);
+                OnPropertyChanged();
+            }
+        }
+
+        public double AmountOfConsumingEnergy
+        {
+            get => amountOfConsumingEnergy;
+            set
+            {
+                amountOfConsumingEnergy = value;
                 OnPropertyChanged();
             }
         }
