@@ -47,20 +47,6 @@
                 </Button.Style>
             </Button>
             <Button Name="StopButton" Visibility="Collapsed" Content="{StaticResource StopButton}" Click="StopButton_Click" ToolTip="Остановка симуляции и возвращение расстановки существ к первоначальному состоянию" />
-            <Button Name="NextStepButton" Click="NextStepButton_Click" ToolTip="Следующий шаг">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Style.Triggers>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Content" Value="{StaticResource NextStepButtonDisabled}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="True">
-                                <Setter Property="Content" Value="{StaticResource NextStepButton}" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
             <Button Name="PlayButton" Click="PlayButton_Click" ToolTip="Запуск симуляции">
                 <Button.Style>
                     <Style TargetType="Button">

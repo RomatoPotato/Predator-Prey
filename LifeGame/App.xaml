@@ -8,6 +8,7 @@
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
+            <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
         </Style>
         <Style TargetType="{x:Type addit:NumericBox}">
             <Setter Property="Margin" Value="0,0,0,4" />
@@ -16,15 +17,18 @@
             <Setter Property="MaxValue" Value="99" />
             <Setter Property="Step" Value="1" />
             <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
+            <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
         </Style>
         <Style TargetType="{x:Type CheckBox}">
             <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
+            <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
         </Style>
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="Width" Value="40" />
             <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
+            <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
         </Style>
         <Style TargetType="{x:Type Slider}">
             <Setter Property="Margin" Value="0,0,0,4" />
@@ -32,11 +36,13 @@
                 <Trigger Property="Validation.HasError" Value="True">
                     <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}" />
                     <Setter Property="ToolTipService.InitialShowDelay" Value="100" />
+                    <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
         <Style TargetType="{x:Type Button}">
             <Setter Property="ToolTipService.InitialShowDelay" Value="500" />
+            <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
         </Style>
         <Image x:Key="PlayButton" Source="/Resources/PlayButton.png" RenderOptions.BitmapScalingMode="HighQuality" />
         <Image x:Key="PlayButtonDisabled" Source="/Resources/PlayButton_disabled.png" RenderOptions.BitmapScalingMode="HighQuality" />

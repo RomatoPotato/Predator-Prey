@@ -11,10 +11,12 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Windows.Controls;
 
 namespace LifeGame.Windows
 {
+    /* 
+     *  Главное окно
+     */
     public partial class MainWindow : System.Windows.Window
     {
         private Simulation sim;
@@ -22,7 +24,8 @@ namespace LifeGame.Windows
         private DispatcherTimer timer;
         private EntitiesPreset entitiesPreset;
 
-        private bool isPlayed = false;
+        private bool isPaused = false;
+        private bool isRunning = false;
         private Entity[][] entities;
 
         public MainWindow()
@@ -69,7 +72,8 @@ namespace LifeGame.Windows
             chart.AddChart("Predator", 200, 2, Brushes.Black);
             chart.AddChart("Prey", 200, 2, Brushes.Green);
         }
-        
+
+        // Установка свойств сущностей и их расстановка на поле
         private void SetSimulationData(bool isReset = false)
         {
             sim.CellSize = sim.SimulationFieldSize / (double)entitiesPreset.AreaWidth;
@@ -142,11 +146,7 @@ namespace LifeGame.Windows
             NextStep();
         }
 
-        private void NextStepButton_Click(object sender, RoutedEventArgs e)
-        {
-            NextStep();
-        }
-
+        // Запрет на ввод ненужных символов в числовые поля
         private void NumbersTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
@@ -160,28 +160,51 @@ namespace LifeGame.Windows
             CoordsManager.CreateInfoFile();
         }
 
+        private void Play()
+        {
+            PlayButton.Content = FindResource("PauseButton");
+            PlayButton.ToolTip = "Приостановка симуляции";
+            EntityConfigPanel.IsEnabled = false;
+            RandomButton.IsEnabled = false;
+            StopButton.Visibility = Visibility.Visible;
+            ResetButton.Visibility = Visibility.Collapsed;
+            timer.Start();
+            isPaused = false;
+        }
+
+        private void Pause()
+        {
+            PlayButton.Content = FindResource("PlayButton");
+            PlayButton.ToolTip = "Запуск симуляции";
+            timer.Stop();
+            isPaused = true;
+        }
+
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            if (isPlayed)
+            if (!isRunning)
             {
-                PlayButton.Content = FindResource("PlayButton");
-                PlayButton.ToolTip = "Запуск симуляции";
-                NextStepButton.IsEnabled = true;
-                timer.Stop();
-            }
-            if (!isPlayed)
-            {
-                PlayButton.Content = FindResource("PauseButton");
-                PlayButton.ToolTip = "Приостановка симуляции";
-                NextStepButton.IsEnabled = false;
-                EntityConfigPanel.IsEnabled = false;
-                RandomButton.IsEnabled = false;
-                StopButton.Visibility = Visibility.Visible;
-                ResetButton.Visibility = Visibility.Collapsed;
-                timer.Start();
-            }
+                SetSimulationData(true);
+                chart.ClearAllCharts();
+                CoordsManager.CreateInfoFile();
 
-            isPlayed = !isPlayed;
+                isRunning = true;
+                isPaused = false;
+
+                Play();
+            }
+            else
+            {
+                if (!isPaused)
+                {
+                    Pause();
+                }
+                else
+                {
+                    Play();
+                }
+            }
+            
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
@@ -189,9 +212,9 @@ namespace LifeGame.Windows
             timer.Stop();
             PlayButton.Content = FindResource("PlayButton");
             PlayButton.ToolTip = "Запуск симуляции";
-            isPlayed = false;
+            isPaused = false;
+            isRunning= false;
             EntityConfigPanel.IsEnabled = true;
-            NextStepButton.IsEnabled = true;
             RandomButton.IsEnabled = true;
             StopButton.Visibility = Visibility.Collapsed;
             ResetButton.Visibility = Visibility.Visible;
@@ -353,7 +376,7 @@ namespace LifeGame.Windows
 
         private void CommandBindingOpenChart_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = !chart.isChartsEmpty && !isPlayed;
+            e.CanExecute = !chart.isChartsEmpty && isPaused;
         }
 
         private void CommandBindingExportToExcel_Executed(object sender, ExecutedRoutedEventArgs e)

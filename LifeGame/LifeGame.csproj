@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\EditButton.png" />
     <None Remove="Resources\HeartIcon.png" />
     <None Remove="Resources\NextStepButton.png" />
     <None Remove="Resources\NextStepButton_disabled.png" />
@@ -36,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\EditButton.png" />
     <Resource Include="Resources\HeartIcon.png" />
     <Resource Include="Resources\NextStepButton.png" />
     <Resource Include="Resources\NextStepButton_disabled.png" />

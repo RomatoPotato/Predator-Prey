@@ -8,6 +8,12 @@ using System.Xml.Serialization;
 
 namespace LifeGame.PresetSettings
 {
+    /*
+     *  Этот класс нужен 
+     *  для сохранения и загрузки шаблона симуляции,
+     *  для проверки на ошибки,
+     *  а также удобного управления настройками сущностей посредством MVVM
+     */
     [Serializable]
     public class EntitiesPreset : IDataErrorInfo, INotifyDataErrorInfo, INotifyPropertyChanged
     {

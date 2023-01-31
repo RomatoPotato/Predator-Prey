@@ -8,6 +8,9 @@ using System.Windows.Media;
 
 namespace LifeGame.Charting
 {
+    /*
+     *  Элемент для отображения графиков
+     */
     public class ChartingElement : Canvas
     {
         public ChartingElement()
@@ -17,13 +20,15 @@ namespace LifeGame.Charting
 
         private VisualCollection visuals;
 
-        private double xStep;
-        private double yStep;
-        private double compressionYRatio;
-        private double margin = 0;
+        // Эти переменные нужны для рисования графика с сеткой
+        private double xStep; // Ширина квадрата сетки
+        private double yStep; // Высота квадрата сетки
+        private double compressionYRatio; // Коэффициент сжатия по высоте, нужно для вмещения сетки
+        private double margin = 0; // Отступ от краёв
 
-        double maxChartsValue = 0;
-        int chartNumbersCount = 0;
+        // Эти переменные нужны для вмещения графика в элемент
+        double maxChartsValue = 0; // Максимальное значение из всех графиков
+        int chartNumbersCount = 0; // Количество точек на графике
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -127,6 +132,7 @@ namespace LifeGame.Charting
             visuals.Add(drawingVisual);
         }
 
+        // Рисование графика без сетки
         public void DrawChart(in List<double> points, double thickness, in Brush chartColor, bool drawAxes = false)
         {
             if (points.Count == 0) return;
@@ -170,6 +176,8 @@ namespace LifeGame.Charting
             visuals.Add(drawingVisualChart);
         }
 
+
+        // Рисование графика с сеткой
         public void DrawChart(in Dictionary<string, List<double>> charts, in Dictionary<string, double> thicknessses, in Dictionary<string, Brush> chartColors, bool drawAxes = false)
         {
             if (charts.Values.First().Count == 0) return;

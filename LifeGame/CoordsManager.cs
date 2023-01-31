@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 
 namespace LifeGame
 {
+    /*
+     *  Класс для временного сохранения координат в файле
+     */
     internal static class CoordsManager
     {
-        private const string FILE_PATH = @"..\entities_amount_changes.temp";
+        private const string FILE_PATH = "entities_amount_changes.temp";
         private const string SEPARATOR = ",";
 
         private static StreamWriter streamWriter;

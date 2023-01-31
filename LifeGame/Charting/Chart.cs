@@ -6,15 +6,24 @@ using System.Windows.Media;
 
 namespace LifeGame.Charting
 {
+    /*
+     *  Класс управления линейными графиками
+     */
     public class Chart
     {
+        // Словарь графиков
         private Dictionary<string, List<double>> charts = new Dictionary<string, List<double>>();
+        // Словарь толщины линий графиков
         private Dictionary<string, double> chartThicknesses = new Dictionary<string, double>();
+        // Словарь ограничений количества точек в графике
         private Dictionary<string, int> chartLimits = new Dictionary<string, int>();
+        // Словарь цветов линий графиков
         private Dictionary<string, Brush> chartColors = new Dictionary<string, Brush>();
 
+        // Элемент для отображения графиков
         private ChartingElement chartingElement;
 
+        // Проверка на отсутствие точек на графике
         public bool isChartsEmpty
         {
             get
@@ -33,6 +42,7 @@ namespace LifeGame.Charting
             this.chartingElement = chartingElement;
         }
 
+        // Проверка существования графика
         private void CheckExistenceOfChart(string chartName)
         {
             if (!charts.ContainsKey(chartName))
@@ -42,7 +52,7 @@ namespace LifeGame.Charting
                 throw new Exception(errorDescription);
             }
         }
-
+        
         public void AddChart(string chartName, int limit, double thickness, Brush color)
         {
             charts.Add(chartName, new List<double>());
@@ -68,16 +78,19 @@ namespace LifeGame.Charting
             return charts[chartName].Last();
         }
 
+        // Рисование одного графика
         public void DrawChart(string chartName, bool drawAxes = false)
         {
             chartingElement.DrawChart(charts[chartName], chartThicknesses[chartName], chartColors[chartName], drawAxes);
         }
 
+        // Рисование всех графиков
         public void DrawAllCharts(bool drawAxes = false)
         {
             chartingElement.DrawChart(charts, chartThicknesses, chartColors, drawAxes);
         }
 
+        // Добавление элемента в указанный график
         public void AddChartElement(string chartName, double value)
         {
             CheckExistenceOfChart(chartName);
@@ -90,7 +103,7 @@ namespace LifeGame.Charting
             charts[chartName].Add(value);
         }
 
-
+        // Очистка точек на всех графиках без их удаления, а также очистка холста
         public void ClearAllCharts()
         {
             foreach (var chart in charts.Values)

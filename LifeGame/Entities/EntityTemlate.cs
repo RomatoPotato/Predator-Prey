@@ -2,6 +2,10 @@
 
 namespace LifeGame.Entities
 {
+    /*
+     *  Шаблон свойств сущностей,
+     *  нужен для передачи его в конструктор
+     */
     public class EntityTemplate
     {
         public SolidColorBrush Color { get; set; } = Brushes.Black;

@@ -6,6 +6,9 @@ using System.Windows.Media;
 
 namespace LifeGame.Windows
 {
+    /*
+     *  Окно для отображения графика
+     */
     public partial class ChartWindow : Window
     {
         Chart chart;
