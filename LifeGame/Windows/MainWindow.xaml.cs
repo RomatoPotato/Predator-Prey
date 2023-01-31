@@ -379,6 +379,11 @@ namespace LifeGame.Windows
             e.CanExecute = !chart.isChartsEmpty && isPaused;
         }
 
+        private void CommandBindingReturnDefault_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !isRunning;
+        }
+
         private void CommandBindingExportToExcel_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var excelApp = new Excel.Application();
@@ -433,6 +438,34 @@ namespace LifeGame.Windows
         private void fieldSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (sim is not null) SetSimulationData();
+        }
+
+        private void CommandBindingReturnDefault_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            entitiesPreset.AreaWidth = 100;
+            entitiesPreset.PredatorsCount = 50;
+            entitiesPreset.PreysCount = 4000;
+            entitiesPreset.CriticalAmountOfNeighborsPredator = 8;
+            entitiesPreset.CriticalAmountOfNeighborsPrey = 8;
+            entitiesPreset.DeathByOverpopulationPredator = false;
+            entitiesPreset.DeathByOverpopulationPrey = false;
+            entitiesPreset.BreedingWith2ParentsPredator = false;
+            entitiesPreset.BreedingWith2ParentsPrey = false;
+            entitiesPreset.MovingIterationsPredator = 1;
+            entitiesPreset.MovingIterationsPrey = 5;
+            entitiesPreset.BreedingIterationsPredatorMin = 10;
+            entitiesPreset.BreedingIterationsPredatorMax = 12;
+            entitiesPreset.BreedingIterationsPreyMin = 5;
+            entitiesPreset.BreedingIterationsPreyMax = 8;
+            entitiesPreset.LifeTimePredatorMin = 30;
+            entitiesPreset.LifeTimePredatorMax = 40;
+            entitiesPreset.LifeTimePreyMin = 15;
+            entitiesPreset.LifeTimePreyMax = 20;
+            entitiesPreset.AmountOfEnergyPredatorMin = 8;
+            entitiesPreset.AmountOfEnergyPredatorMax = 10;
+            entitiesPreset.AmountOfConsumingEnergy = 2;
+
+            SetSimulationData();
         }
     }
 }
