@@ -467,5 +467,10 @@ namespace LifeGame.Windows
 
             SetSimulationData();
         }
+
+        private void CommandBindingInfo_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            MessageBox.Show("Разработчик: RomatoPotato\nНа этом всё", "Инфо", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }

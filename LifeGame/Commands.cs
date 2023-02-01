@@ -24,5 +24,12 @@ namespace LifeGame
                 {
                     new KeyGesture(Key.R, ModifierKeys.Control)
                 });
+
+        public static readonly RoutedUICommand Info =
+            new RoutedUICommand("", "Info", typeof(Commands),
+                new InputGestureCollection()
+                {
+                    new KeyGesture(Key.F1)
+                });
     }
 }

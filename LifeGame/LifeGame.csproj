@@ -5,10 +5,20 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>HeartIcon.ico</ApplicationIcon>
+    <SignAssembly>False</SignAssembly>
+    <AssemblyName>Хищник-Жертва</AssemblyName>
+    <NeutralLanguage>ru</NeutralLanguage>
+    <Authors>RomatoPotato</Authors>
+    <Company>RomatoPotato</Company>
+    <Description>Приложение моделирования системы хищник-жертва</Description>
+    <Copyright>Licensed under the Apache License, Version 2.0</Copyright>
+    <PackageIcon>HeartIcon.png</PackageIcon>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\HeartIcon.png" />
     <None Remove="Resources\NextStepButton.png" />
     <None Remove="Resources\NextStepButton_disabled.png" />
     <None Remove="Resources\PauseButton.png" />
@@ -35,6 +45,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="HeartIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Release\net6.0-windows\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\HeartIcon.png" />
     <Resource Include="Resources\NextStepButton.png" />
     <Resource Include="Resources\NextStepButton_disabled.png" />
@@ -47,6 +68,13 @@
     <Resource Include="Resources\ResetButton_disabled.png" />
     <Resource Include="Resources\StopButton.png" />
     <Resource Include="Windows\HeartIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\HeartIcon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

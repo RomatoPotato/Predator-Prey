@@ -16,6 +16,7 @@
         <CommandBinding Command="ApplicationCommands.Close" Executed="CommandBindingClose_Executed" />
         <CommandBinding Command="local:Commands.ExportToExcel" Executed="CommandBindingExportToExcel_Executed" CanExecute="CommandBindingOpenChart_CanExecute" />
         <CommandBinding Command="local:Commands.ReturnDefault" Executed="CommandBindingReturnDefault_Executed" CanExecute="CommandBindingReturnDefault_CanExecute" />
+        <CommandBinding Command="local:Commands.Info" Executed="CommandBindingInfo_Executed" />
     </Window.CommandBindings>
     <DockPanel LastChildFill="True" Name="MainPanel">
         <Menu DockPanel.Dock="Top">
@@ -33,6 +34,7 @@
                     <MenuItem Header="В _Excel" Command="local:Commands.ExportToExcel" />
                 </MenuItem>
             </MenuItem>
+            <MenuItem Header="_Информация" Command="local:Commands.Info"/>
         </Menu>
         <ToolBar Height="30" DockPanel.Dock="Top" IsEnabled="{Binding Path=HasNoErrors, UpdateSourceTrigger=PropertyChanged}">
             <Button Name="ResetButton" Click="ResetButton_Click" ToolTip="Случайная расстановка существ в симуляции">
